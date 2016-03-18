@@ -5,6 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.*;
 import javax.validation.constraints.*;
 
-public class formsConfiguration extends Configuration {
+public class FormsConfiguration extends Configuration {
     // TODO: implement service configuration
 }

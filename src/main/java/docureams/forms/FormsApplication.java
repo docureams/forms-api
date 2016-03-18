@@ -4,10 +4,10 @@ import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
-public class formsApplication extends Application<formsConfiguration> {
+public class FormsApplication extends Application<FormsConfiguration> {
 
     public static void main(final String[] args) throws Exception {
-        new formsApplication().run(args);
+        new FormsApplication().run(args);
     }
 
     @Override
@@ -16,12 +16,12 @@ public class formsApplication extends Application<formsConfiguration> {
     }
 
     @Override
-    public void initialize(final Bootstrap<formsConfiguration> bootstrap) {
+    public void initialize(final Bootstrap<FormsConfiguration> bootstrap) {
         // TODO: application initialization
     }
 
     @Override
-    public void run(final formsConfiguration configuration,
+    public void run(final FormsConfiguration configuration,
                     final Environment environment) {
         // TODO: implement application
     }
