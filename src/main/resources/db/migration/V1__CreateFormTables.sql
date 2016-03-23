@@ -1,19 +1,20 @@
-create table FORM_TYPE (
-    ID long default not null autoincrement,
-    NAME varchar(255) not null,
-    DESCRIPTION text null,
-    PDF_TEMPLATE varchar(255) not null,
-    JSON_METADATA mediumtext not null
+CREATE TABLE form_type (
+	id MEDIUMINT NOT NULL AUTO_INCREMENT,
+	name VARCHAR(255) NOT NULL,
+	description TEXT null,
+	pdf_template VARCHAR(255) NOT NULL,
+	json_metadata MEDIUMTEXT NOT NULL,
+	PRIMARY KEY (id)
 );
-alter table FORM_TYPE add constraint PK_FORM_TYPE PRIMARY KEY(ID);
 
-create table FORM (
-    ID long default not null autoincrement,
-    NAME varchar(255) not null
+CREATE TABLE form (
+     id MEDIUMINT NOT NULL AUTO_INCREMENT,
+     name VARCHAR(255) NOT NULL,
+	 json_data MEDIUMTEXT NOT NULL,
+     PRIMARY KEY (id)
 );
-alter table FORM add constraint PK_FORM PRIMARY KEY(ID);
 
-insert into FORM_TYPE (NAME, DESCRIPTION, PDF_TEMPLATE, JSON_METADATA) values (
+INSERT INTO form_type (name, description, pdf_template, json_metadata) VALUES (
 'f1094b',
 '1094-B – Transmittal of Health Coverage Information Returns – Used by IRS in the enforcement of the Individual Mandate. Filed by insurance carrier or self-insured plan. Transmitted to the IRS. <a href="https://www.irs.gov/pub/irs-pdf/f1094b.pdf"/>',
 'c:\scheduler\forms\f1094b.pdf',
@@ -30,7 +31,7 @@ insert into FORM_TYPE (NAME, DESCRIPTION, PDF_TEMPLATE, JSON_METADATA) values (
 "Title":{"fullyQualifiedFieldName":"topmostSubform[0].Page1[0].f1_12[0]", "alternateFieldName":"", "fieldType":"org.apache.pdfbox.pdmodel.interactive.form.PDTextbox"}
 }');
 
-insert into FORM_TYPE (NAME, DESCRIPTION, PDF_TEMPLATE, JSON_METADATA) values (
+INSERT INTO form_type (name, description, pdf_template, json_metadata) VALUES (
 'f1094c',
 '1094-C – Transmittal of Employer Provided Health Insurance Offer and Coverage Information Returns. Used by the IRS in the enforcement of the Employer Mandate. Filed by Applicable Large Employers to IRS. <a href="https://www.irs.gov/pub/irs-pdf/f1094c.pdf"/>',
 'c:\scheduler\forms\f1094c.pdf',
@@ -203,7 +204,7 @@ insert into FORM_TYPE (NAME, DESCRIPTION, PDF_TEMPLATE, JSON_METADATA) values (
 "Member[29].EIN":{"fullyQualifiedFieldName":"topmostSubform[0].Page3[0].PartIVNameEIN2[0].f3_71[0]", "alternateFieldName":"", "fieldType":"org.apache.pdfbox.pdmodel.interactive.form.PDTextbox"}
 }');
 
-insert into FORM_TYPE (NAME, DESCRIPTION, PDF_TEMPLATE, JSON_METADATA) values (
+INSERT INTO form_type (name, description, pdf_template, json_metadata) VALUES (
 'f1095b',
 '1095-B – Health Coverage – Used by IRS in the enforcement of the Individual Mandate. Filed by the insurance carrier or self-insured plan by non-ALE. Transmitted to the IRS. <a href="https://www.irs.gov/pub/irspdf/f1095b.pdf"/>',
 'c:\scheduler\forms\f1095b.pdf',
@@ -525,7 +526,7 @@ insert into FORM_TYPE (NAME, DESCRIPTION, PDF_TEMPLATE, JSON_METADATA) values (
 "CoveredIndividual[17].Dec":{"fullyQualifiedFieldName":"topmostSubform[0].Page3[0].Table_Part4[0].BodyRow12[0].c2_156[0]", "alternateFieldName":"", "fieldType":"org.apache.pdfbox.pdmodel.interactive.form.PDCheckbox"}
 }');
 
-insert into FORM_TYPE (NAME, DESCRIPTION, PDF_TEMPLATE, JSON_METADATA) values (
+INSERT INTO form_type (name, description, pdf_template, json_metadata) VALUES (
 'f1095c',
 '1095-C – Employer Provided Health Insurance Offer and Coverage – Used by the IRS in the enforcement of the Employer Mandate. Transmitted to the IRS and to employees eligible for coverage by Applicable Large Employer. <a href="https://www.irs.gov/pub/irs-pdf/f1095c.pdf"/>',
 'c:\scheduler\forms\f1095c.pdf',
