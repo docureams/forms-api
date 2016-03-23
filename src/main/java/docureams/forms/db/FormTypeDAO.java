@@ -5,6 +5,7 @@ import docureams.forms.core.mapper.FormTypeMapper;
 import java.util.List;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
+import org.skife.jdbi.v2.sqlobject.GetGeneratedKeys;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
@@ -19,8 +20,9 @@ public interface FormTypeDAO {
     FormType findByName(@Bind("name") String name);
 
     @SqlUpdate("update into FORMTYPE set NAME = :name where ID = :id")
-    int update(@BindBean FormType formType);
+    long update(@BindBean FormType formType);
 
+    @GetGeneratedKeys
     @SqlUpdate("insert into FORMTYPE (ID, NAME) values (:id, :name)")
-    int insert(@BindBean FormType formType);
+    long insert(@BindBean FormType formType);
 }

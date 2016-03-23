@@ -5,6 +5,7 @@ import docureams.forms.core.mapper.FormMapper;
 import java.util.List;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
+import org.skife.jdbi.v2.sqlobject.GetGeneratedKeys;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
@@ -16,14 +17,15 @@ public interface FormDAO {
     List<Form> getAll();
 
     @SqlQuery("select * from FORM where ID = :id")
-    Form findById(@Bind("id") int id);
+    Form findById(@Bind("id") long id);
 
     @SqlUpdate("delete from FORM where ID = :id")
-    int deleteById(@Bind("id") int id);
+    long deleteById(@Bind("id") long id);
 
     @SqlUpdate("update into FORM set NAME = :name where ID = :id")
-    int update(@BindBean Form form);
+    long update(@BindBean Form form);
 
+    @GetGeneratedKeys
     @SqlUpdate("insert into FORM (ID, NAME) values (:id, :name)")
-    int insert(@BindBean Form form);
+    long insert(@BindBean Form form);
 }

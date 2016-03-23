@@ -1,6 +1,9 @@
 create table FORM_TYPE (
     ID long default not null autoincrement,
-    NAME varchar(255) not null
+    NAME varchar(255) not null,
+    DESCRIPTION text null,
+    PDF_TEMPLATE varchar(255) not null,
+    JSON_METADATA mediumtext not null
 );
 alter table FORM_TYPE add constraint PK_FORM_TYPE PRIMARY KEY(ID);
 
