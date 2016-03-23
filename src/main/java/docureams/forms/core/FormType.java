@@ -3,14 +3,19 @@ package docureams.forms.core;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -140,6 +145,94 @@ public class FormType implements Serializable {
         }
 
         return new ObjectMapper().writeValueAsString(dataMap);
+    }
+    
+    private class vbType {
+        String typeName;
+        boolean isArray = false;
+        int ubound = 0;
+    }
+    
+    public String generateClientSdkForAsp() {
+        try {
+            LinkedHashMap<String, LinkedHashMap<String, vbType>> types = new LinkedHashMap<>();
+            types.put(name.toUpperCase(), new LinkedHashMap<String, vbType>());
+            for (String fieldKey : metadataMap().keySet()) {
+                String currentTypeName = name.toUpperCase();
+                PDFieldDescriptor fieldDesc = metadataMap().get(fieldKey);
+                StringTokenizer st = new StringTokenizer(fieldKey, ".");
+                while (st.hasMoreTokens()) {
+                    String memberName;
+                    vbType vbt = new vbType();
+                    String token = st.nextToken();
+                    if (token.endsWith("]")) {
+                        vbt.isArray = true;
+                        int index = Integer.parseInt(token.substring(token.indexOf("[") + 1, token.indexOf("]")));
+                        vbt.ubound = index > vbt.ubound ? index : vbt.ubound;
+                    }
+                    if (st.hasMoreTokens()) {
+                        memberName = token.substring(0, token.indexOf("["));
+                        vbt.typeName = name.toUpperCase() + "_" + memberName;
+                        if (types.get(vbt.typeName) == null) {
+                            types.put(vbt.typeName, new LinkedHashMap<String, vbType>());
+                        }
+                    } else if (fieldDesc.fieldType.endsWith("PDCheckbox")) {
+                        memberName = token;
+                        vbt.typeName = "Boolean";
+                    } else {
+                        memberName = token;
+                        vbt.typeName = "String";
+                    }
+                    types.get(currentTypeName).put(memberName, vbt);
+                    currentTypeName = vbt.typeName;
+                }
+            }
+            
+            StringBuilder builder = new StringBuilder();
+            builder.append("<%\n\n");
+            builder.append("Class ").append(name.toUpperCase()).append("\n\n");
+            
+            for (String memberName : types.get(name.toUpperCase()).keySet()) {
+                vbType vbt = types.get(name.toUpperCase()).get(memberName);
+                builder.append("  Public ").append(memberName).append(vbt.isArray ? "(" + Integer.toString(vbt.ubound) + ")" : "").append("\n");
+            }
+            builder.append("\n  Private Sub Class_Initialize()\n");
+            for (String fieldKey : metadataMap().keySet()) {
+                PDFieldDescriptor fieldDesc = metadataMap().get(fieldKey);
+                builder.append("    ").append(fieldKey.replace('[','(').replace(']',')')).append(" = ").append(fieldDesc.fieldType.endsWith("PDCheckbox") ? "False\n" : "\"\"\n");
+            }
+            builder.append("  End Sub\n\n");
+            builder.append("  Public Function toDictionary()\n");
+            builder.append("    Dim data\n");
+            builder.append("    Set data = Server.CreateObject(\"Scripting.Dictionary\")\n");
+            for (String fieldKey : metadataMap().keySet()) {
+                builder.append("    data.Add \"").append(fieldKey).append("\", ").append(fieldKey.replace('[','(').replace(']',')')).append("\n");
+            }
+            builder.append("    Set toDictionary = data\n");
+            builder.append("  End Function\n\n");
+            builder.append("  Public Sub fromDictionary(data)\n");
+            for (String fieldKey : metadataMap().keySet()) {
+                builder.append("    ").append(fieldKey.replace('[','(').replace(']',')')).append(" = ").append("data.Item(\"").append(fieldKey).append("\")\n");
+            }
+            builder.append("  End Sub\n\n");
+            builder.append("End Class\n\n");
+            
+            for (String typeName : types.keySet()) {
+                if (!typeName.equalsIgnoreCase(name)) {
+                    builder.append("Class ").append(typeName).append("\n\n");
+                    for (String memberName : types.get(typeName).keySet()) {
+                        vbType vbt = types.get(typeName).get(memberName);
+                        builder.append("  Public ").append(memberName).append(vbt.isArray ? "(" + Integer.toString(vbt.ubound) + ")" : "").append("\n");
+                    }
+                    builder.append("\nEnd Class\n\n");
+                }
+            }
+            builder.append("%>\n");
+            return builder.toString();
+        } catch (IOException ex) {
+            Logger.getLogger(FormType.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
     }
     
     public String toJson() {

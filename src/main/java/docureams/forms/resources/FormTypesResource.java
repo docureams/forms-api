@@ -2,10 +2,12 @@ package docureams.forms.resources;
 
 import docureams.forms.core.FormType;
 import docureams.forms.db.FormTypeDAO;
+import java.nio.charset.StandardCharsets;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
+import javax.ws.rs.core.Response;
 
 @Path("/formTypes")
 @Consumes({MediaType.APPLICATION_JSON})
@@ -44,4 +46,17 @@ public class FormTypesResource {
 
         return formType;
     }
+    
+    @Produces({MediaType.APPLICATION_OCTET_STREAM})
+    @GET
+    @Path("/{name}/asp")
+    public Response getClientSdkForAsp(@PathParam("name") String name) {
+        String contents = formTypeDAO.findByName(name).generateClientSdkForAsp();
+        return Response
+            .ok(contents.getBytes(StandardCharsets.UTF_8))
+            .header("content-disposition","attachment; filename = " + name.toUpperCase() + ".asp")
+            .build();
+    }
+
+
 }
