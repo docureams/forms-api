@@ -2,11 +2,11 @@ server:
   applicationConnectors:
     - type: http
       port: 80
-    - type: https
-      port: 443
-      keyStorePath: example.jks
-      keyStorePassword: myS3cr3tPwd
-      enableCRLDP: true
+    # - type: https
+      # port: 443
+      # keyStorePath: example.jks
+      # keyStorePassword: myS3cr3tPwd
+      # enableCRLDP: true
   requestLog:
       appenders: []
 logging:
