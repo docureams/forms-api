@@ -219,7 +219,7 @@ public class FormType implements Serializable {
                     PDField field = (PDField) fieldsIter.next();
                     processField(field, field.getPartialName());
                 }
-                return new ObjectMapper().writeValueAsString(dataMap);
+                return new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(dataMap);
             } catch (Exception ex) {
                 return null;
             } finally {
