@@ -28,9 +28,9 @@ public class FormType implements Serializable {
     
     private String description;
 
-    private String jsonMetadata;
-
     private String pdfTemplate;
+
+    private String jsonMetadata;
 
     private static class PDFieldDescriptor {
         public String fullyQualifiedFieldName;
@@ -102,21 +102,21 @@ public class FormType implements Serializable {
         return this;
     }
 
-    public String getJsonMetadata() {
-        return jsonMetadata;
-    }
-
-    public FormType setJsonMetadata(String jsonMetadata) {
-        this.jsonMetadata = jsonMetadata;
-        return this;
-    }
-
     public String getPdfTemplate() {
         return pdfTemplate;
     }
 
     public FormType setPdfTemplate(String pdfTemplate) {
         this.pdfTemplate = pdfTemplate;
+        return this;
+    }
+
+    public String getJsonMetadata() {
+        return jsonMetadata;
+    }
+
+    public FormType setJsonMetadata(String jsonMetadata) {
+        this.jsonMetadata = jsonMetadata;
         return this;
     }
 

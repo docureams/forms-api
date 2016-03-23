@@ -13,6 +13,9 @@ public class FormTypeMapper implements ResultSetMapper<FormType>
     {
         return new FormType()
                 .setId(resultSet.getInt("ID"))
-                .setName(resultSet.getString("NAME"));
+                .setName(resultSet.getString("NAME"))
+                .setDescription(resultSet.getString("DESCRIPTION"))
+                .setPdfTemplate(resultSet.getString("PDF_TEMPLATE"))
+                .setJsonMetadata(resultSet.getString("JSON_METADATA"));
     }
 }
