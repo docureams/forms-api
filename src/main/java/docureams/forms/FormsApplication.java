@@ -11,6 +11,7 @@ import io.dropwizard.flyway.FlywayFactory;
 import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import org.flywaydb.core.Flyway;
 import org.skife.jdbi.v2.DBI;
 
 public class FormsApplication extends Application<FormsConfiguration> {
@@ -48,5 +49,9 @@ public class FormsApplication extends Application<FormsConfiguration> {
         final FormDAO formDao = jdbi.onDemand(FormDAO.class);
         environment.jersey().register(new FormTypesResource(formTypeDao));
         environment.jersey().register(new FormsResource(formDao));
+        
+        Flyway flyway = new Flyway();
+        flyway.setDataSource(config.getDataSourceFactory().getUrl(), config.getDataSourceFactory().getUser(), config.getDataSourceFactory().getPassword());
+        flyway.migrate();
     }
 }
