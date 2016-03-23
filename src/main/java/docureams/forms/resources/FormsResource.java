@@ -31,7 +31,7 @@ public class FormsResource {
 
     @POST
     public Form add(@Valid Form form) {
-        int newId = formDAO.insert(form);
+        long newId = formDAO.insert(form);
 
         return form.setId(newId);
     }

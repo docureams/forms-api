@@ -33,7 +33,7 @@ public class FormTypesResource {
 
     @POST
     public FormType add(@Valid FormType formType) {
-        int newId = formTypeDAO.insert(formType);
+        long newId = formTypeDAO.insert(formType);
 
         return formType.setId(newId);
     }
