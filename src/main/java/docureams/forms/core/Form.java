@@ -2,7 +2,6 @@ package docureams.forms.core;
 
 import java.io.Serializable;
 import javax.ws.rs.FormParam;
-import javax.ws.rs.PathParam;
 
 public class Form implements Serializable {
     private long id;
@@ -23,7 +22,6 @@ public class Form implements Serializable {
         return id;
     }
 
-    @PathParam("id")
     public Form setId(long id) {
         this.id = id;
         return this;
