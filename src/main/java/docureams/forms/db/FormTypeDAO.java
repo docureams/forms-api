@@ -13,16 +13,16 @@ import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 @RegisterMapper(FormTypeMapper.class)
 public interface FormTypeDAO {
 
-    @SqlQuery("select * from FORMTYPE")
+    @SqlQuery("SELECT * FROM form_type")
     List<FormType> getAll();
 
-    @SqlQuery("select * from FORMTYPE where NAME = :name")
+    @SqlQuery("SELECT * FROM form_type WHERE name = :name")
     FormType findByName(@Bind("name") String name);
 
-    @SqlUpdate("update FORMTYPE set NAME = :name where ID = :id")
+    @SqlUpdate("UPDATE form_type SET name = :name, description = :description, pdf_template = :pdf_template, json_metadata = :json_metadata WHERE id = :id")
     long update(@BindBean FormType formType);
 
     @GetGeneratedKeys
-    @SqlUpdate("insert into FORMTYPE (ID, NAME) values (:id, :name)")
+    @SqlUpdate("INSERT INTO form_type (id, name, description, pdf_template, json_metadata) VALUES (:id, :name, :description, :pdf_template, :json_metadata)")
     long insert(@BindBean FormType formType);
 }

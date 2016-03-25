@@ -12,10 +12,10 @@ public class FormTypeMapper implements ResultSetMapper<FormType>
     public FormType map(int index, ResultSet resultSet, StatementContext statementContext) throws SQLException
     {
         return new FormType()
-                .setId(resultSet.getInt("ID"))
-                .setName(resultSet.getString("NAME"))
-                .setDescription(resultSet.getString("DESCRIPTION"))
-                .setPdfTemplate(resultSet.getString("PDF_TEMPLATE"))
-                .setJsonMetadata(resultSet.getString("JSON_METADATA"));
+                .setId(resultSet.getInt("id"))
+                .setName(resultSet.getString("name"))
+                .setDescription(resultSet.getString("description"))
+                .setPdfTemplate(resultSet.getString("pdf_template"))
+                .setJsonMetadata(resultSet.getString("json_metadata"));
     }
 }
