@@ -1,12 +1,17 @@
 package docureams.forms.core;
 
 import java.io.Serializable;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.PathParam;
 
 public class Form implements Serializable {
+    @PathParam("id")
     private long id;
-
+    
+    @FormParam("name")
     private String name;
-
+    
+    @FormParam("jsonData")
     private String jsonData;
 
     public Form() {

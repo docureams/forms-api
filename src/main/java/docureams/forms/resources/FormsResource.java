@@ -44,7 +44,7 @@ public class FormsResource {
 
     @POST
     @Consumes({MediaType.APPLICATION_FORM_URLENCODED})
-    public Form add(@Valid @FormParam("form") Form form) {
+    public Form add(@Valid @BeanParam Form form) {
         long newId = formDAO.insert(form);
         return form.setId(newId);
     }
@@ -52,7 +52,7 @@ public class FormsResource {
     @PUT
     @Path("/{id}")
     @Consumes({MediaType.APPLICATION_FORM_URLENCODED})
-    public Form update(@PathParam("id") Integer id, @Valid @FormParam("form") Form form) {
+    public Form update(@PathParam("id") Integer id, @Valid @BeanParam Form form) {
         form = form.setId(id);
         formDAO.update(form);
         return form;
