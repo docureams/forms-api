@@ -1,11 +1,19 @@
 package docureams.forms.resources;
 
 import docureams.forms.core.Form;
+import docureams.forms.core.FormType;
 import docureams.forms.db.FormDAO;
+import docureams.forms.db.FormTypeDAO;
+import java.io.File;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.ws.rs.core.Response;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.util.PDFMergerUtility;
 
 @Path("/forms")
 @Consumes({MediaType.APPLICATION_JSON})
@@ -13,9 +21,11 @@ import java.util.List;
 public class FormsResource {
 
     FormDAO formDAO;
+    FormTypeDAO formTypeDAO;
 
-    public FormsResource(FormDAO formDAO) {
+    public FormsResource(FormDAO formDAO, FormTypeDAO formTypeDAO) {
         this.formDAO = formDAO;
+        this.formTypeDAO = formTypeDAO;
     }
 
     @GET
@@ -50,4 +60,48 @@ public class FormsResource {
     public void delete(@PathParam("id") Integer id) {
         formDAO.deleteById(id);
     }
+    
+    @GET
+    @Path("/{id}/pdf")
+    @Produces("application/pdf")
+    public Response mergeAsPdf(@QueryParam("ids") String ids, @QueryParam("filename") String filename) {
+        try {
+            PDDocument destination = null;
+            PDFMergerUtility merger = new PDFMergerUtility();
+            for (String id : ids.split(",")) {
+                Form form = formDAO.findById(Long.parseLong(id));
+                if (form == null) {
+                    return Response.serverError().build();
+                }
+                FormType formType = formTypeDAO.findByName(form.getName());
+                if (formType == null) {
+                    return Response.serverError().build();
+                }
+                PDDocument document = formType.generatePdf(form.getJsonData());
+                if (document == null) {
+                    return Response.serverError().build();
+                }
+                if (destination != null) {
+                    merger.appendDocument(destination, document);
+                    document.close();
+                } else {
+                    destination = document;
+                }
+            }
+            File tempFile = File.createTempFile("form", ".pdf");
+            tempFile.deleteOnExit();
+            destination.save(tempFile.getCanonicalPath());
+            destination.close();
+            return Response
+                .ok(tempFile)
+                .header("content-type", "application/pdf")
+                .header("content-disposition","attachment; filename = " + filename != null ? filename : "form-"+ids+".pdf")
+                .build();
+        } catch (Exception ex) {
+            Logger.getLogger(FormsResource.class.getName()).log(Level.SEVERE, null, ex);
+            return Response.serverError().build();
+        }
+    }
+
+    
 }
