@@ -8,10 +8,10 @@ public class Form implements Serializable {
     @PathParam("id")
     private long id;
     
-    @FormParam("name")
+    @FormParam("form.name")
     private String name;
     
-    @FormParam("jsonData")
+    @FormParam("form.jsonData")
     private String jsonData;
 
     public Form() {
