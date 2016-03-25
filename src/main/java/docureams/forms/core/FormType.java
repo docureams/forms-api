@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -71,20 +70,20 @@ public class FormType implements Serializable {
         }
     }
 
-    private HashMap<String, PDFieldDescriptor> _metadataMap;
-    private HashMap<String, PDFieldDescriptor> metadataMap() throws IOException {
+    private LinkedHashMap<String, PDFieldDescriptor> _metadataMap;
+    private LinkedHashMap<String, PDFieldDescriptor> metadataMap() throws IOException {
         if (_metadataMap == null) {
             ObjectMapper mapper = new ObjectMapper();
-            TypeReference metadataType = new TypeReference<HashMap<String, PDFieldDescriptor>>() { };
+            TypeReference metadataType = new TypeReference<LinkedHashMap<String, PDFieldDescriptor>>() { };
             _metadataMap = mapper.readValue(jsonMetadata, metadataType);  
         }
         return _metadataMap;
     }
 
-    private HashMap<String, String> _reverseMap;
-    private HashMap<String, String> reverseMap() throws IOException {
+    private LinkedHashMap<String, String> _reverseMap;
+    private LinkedHashMap<String, String> reverseMap() throws IOException {
         if (_reverseMap == null) {
-            _reverseMap = new HashMap<>();
+            _reverseMap = new LinkedHashMap<>();
             for (String fieldKey : metadataMap().keySet()) {
                 PDFieldDescriptor fieldDesc = metadataMap().get(fieldKey);
                 _reverseMap.put(fieldDesc.fullyQualifiedFieldName, fieldKey);
@@ -161,7 +160,7 @@ public class FormType implements Serializable {
     }
     
     public String defaults() throws JsonProcessingException, IOException {
-        HashMap<String, Object> dataMap = new HashMap<>();
+        LinkedHashMap<String, Object> dataMap = new LinkedHashMap<>();
         for (String fieldKey : metadataMap().keySet()) {
             PDFieldDescriptor fieldDesc = metadataMap().get(fieldKey);
             dataMap.put(fieldKey, fieldDesc.fieldType.endsWith("PDCheckbox") ? false : "");
@@ -278,10 +277,10 @@ public class FormType implements Serializable {
 
     public class GeneratePdfJob {
 
-        private final HashMap<String, Object> dataMap;
+        private final LinkedHashMap<String, Object> dataMap;
 
         public GeneratePdfJob(String jsonData) throws IOException {
-            TypeReference dataType = new TypeReference<HashMap<String, Object>>() {};
+            TypeReference dataType = new TypeReference<LinkedHashMap<String, Object>>() {};
             this.dataMap = new ObjectMapper().readValue(jsonData, dataType);
         }
 
@@ -318,7 +317,7 @@ public class FormType implements Serializable {
     public class ParsePdfJob {
 
         private final File pdfFile;
-        private final HashMap<String, Object> dataMap = new HashMap<>();
+        private final LinkedHashMap<String, Object> dataMap = new LinkedHashMap<>();
 
         public ParsePdfJob(File pdfFile) {
             this.pdfFile = pdfFile;
