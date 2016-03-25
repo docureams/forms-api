@@ -22,10 +22,10 @@ public interface FormDAO {
     @SqlUpdate("DELETE FROM form WHERE id = :id")
     long deleteById(@Bind("id") long id);
 
-    @SqlUpdate("UPDATE form SET name = :name WHERE id = :id")
+    @SqlUpdate("UPDATE form SET name = :name, json_data = :json_data WHERE id = :id")
     long update(@BindBean Form form);
 
     @GetGeneratedKeys
-    @SqlUpdate("INSERT INTO form (id, name) VALUES (:id, :name)")
+    @SqlUpdate("INSERT INTO form (id, name, json_data) VALUES (:id, :name, :json_data)")
     long insert(@BindBean Form form);
 }

@@ -13,6 +13,7 @@ public class FormMapper implements ResultSetMapper<Form>
     {
         return new Form()
                 .setId(resultSet.getInt("id"))
-                .setName(resultSet.getString("name"));
+                .setName(resultSet.getString("name"))
+                .setJsonData(resultSet.getString("json_data"));
     }
 }

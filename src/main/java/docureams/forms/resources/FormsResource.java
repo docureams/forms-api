@@ -16,10 +16,6 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.util.PDFMergerUtility;
 
 @Path("/forms")
-@Consumes({
-    MediaType.APPLICATION_JSON,
-    MediaType.APPLICATION_FORM_URLENCODED
-})
 @Produces({MediaType.APPLICATION_JSON})
 public class FormsResource {
 
@@ -47,6 +43,7 @@ public class FormsResource {
     }
 
     @POST
+    @Consumes({MediaType.APPLICATION_FORM_URLENCODED})
     public Form add(@Valid Form form) {
         long newId = formDAO.insert(form);
         return form.setId(newId);
@@ -54,6 +51,7 @@ public class FormsResource {
 
     @PUT
     @Path("/{id}")
+    @Consumes({MediaType.APPLICATION_FORM_URLENCODED})
     public Form update(@PathParam("id") Integer id, @Valid Form form) {
         form = form.setId(id);
         formDAO.update(form);
