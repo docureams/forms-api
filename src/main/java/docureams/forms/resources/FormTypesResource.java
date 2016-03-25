@@ -52,11 +52,14 @@ public class FormTypesResource {
     @Path("/{name}/asp")
     public Response getClientSdkForAsp(@PathParam("name") String name) {
         String contents = formTypeDAO.findByName(name).generateClientSdkForAsp();
-        return Response
-            .ok(contents.getBytes(StandardCharsets.UTF_8))
-            .header("content-disposition","attachment; filename = " + name.toUpperCase() + ".asp")
-            .build();
+        if (contents != null) {
+            return Response
+                .ok(contents.getBytes(StandardCharsets.UTF_8))
+                .header("content-disposition","attachment; filename = " + name.toUpperCase() + ".asp")
+                .build();
+        } else {
+            return Response.serverError().build();
+        }
     }
-
 
 }

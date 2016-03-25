@@ -3,11 +3,13 @@ package docureams.forms.core;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -122,7 +124,7 @@ public class FormType implements Serializable {
         return this;
     }
 
-    public InputStream generatePdf(String jsonData) throws Exception {
+    public PDDocument generatePdf(String jsonData) throws Exception {
         return new GeneratePdfJob(jsonData).doJobWithResult();
     }
 
@@ -146,6 +148,7 @@ public class FormType implements Serializable {
     
     private class vbType {
         String typeName;
+        boolean isObject = false;
         boolean isArray = false;
         int ubound = 0;
     }
@@ -170,6 +173,7 @@ public class FormType implements Serializable {
                     if (st.hasMoreTokens()) {
                         memberName = token.substring(0, token.indexOf("["));
                         vbt.typeName = name.toUpperCase() + "_" + memberName;
+                        vbt.isObject = true;
                         if (types.get(vbt.typeName) == null) {
                             types.put(vbt.typeName, new LinkedHashMap<String, vbType>());
                         }
@@ -194,6 +198,18 @@ public class FormType implements Serializable {
                 builder.append("  Public ").append(memberName).append(vbt.isArray ? "(" + Integer.toString(vbt.ubound) + ")" : "").append("\n");
             }
             builder.append("\n  Private Sub Class_Initialize()\n");
+            for (String memberName : types.get(name.toUpperCase()).keySet()) {
+                vbType vbt = types.get(name.toUpperCase()).get(memberName);
+                if (vbt.isObject) {
+                    if (vbt.isArray) {
+                        for (int i = 0; i <= vbt.ubound; i++) {
+                            builder.append("    Set ").append(memberName).append("(").append(Integer.toString(i)).append(") = new ").append(vbt.typeName).append("\n");
+                        }
+                    } else {
+                        builder.append("    Set ").append(memberName).append(" = new ").append(vbt.typeName).append("\n");
+                    }
+                }
+            }
             for (String fieldKey : metadataMap().keySet()) {
                 PDFieldDescriptor fieldDesc = metadataMap().get(fieldKey);
                 builder.append("    ").append(fieldKey.replace('[','(').replace(']',')')).append(" = ").append(fieldDesc.fieldType.endsWith("PDCheckbox") ? "False\n" : "\"\"\n");
@@ -245,7 +261,7 @@ public class FormType implements Serializable {
             this.dataMap = new ObjectMapper().readValue(jsonData, dataType);
         }
 
-        public InputStream doJobWithResult() {
+        public PDDocument doJobWithResult() {
             PDDocument document = null;
             try {
                 document = PDDocument.load(new File(pdfTemplate));
@@ -262,28 +278,15 @@ public class FormType implements Serializable {
                             }
                         } else if (fieldDesc.fieldType.endsWith("PDTextbox")) {
                             PDTextbox field = (PDTextbox) acroForm.getField(fieldDesc.fullyQualifiedFieldName);
-                            field.setValue(this.dataMap.get(fieldKey).toString());
+                            Object value = this.dataMap.get(fieldKey);
+                            field.setValue(value != null ? value.toString() : "");
                         }
                     }
                 }
-
-                // Save and close the filled out form.
-                File tempFile = File.createTempFile("form", ".pdf");
-                tempFile.deleteOnExit();
-                document.save(tempFile.getCanonicalPath());
-
-                return new FileInputStream(tempFile);
+                return document;
             } catch (Exception ex) {
                 Logger.getLogger(FormType.class.getName()).log(Level.SEVERE, null, ex);
                 return null;
-            } finally {
-                if (document != null) {
-                    try {
-                        document.close();
-                    } catch (IOException ex) {
-                        Logger.getLogger(FormType.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
             }
         }
     }
