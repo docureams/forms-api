@@ -43,6 +43,13 @@ public class FormsResource {
     }
 
     @POST
+    @Consumes({MediaType.APPLICATION_JSON})
+    public Form add(@Valid Form form) {
+        long newId = formDAO.insert(form);
+        return form.setId(newId);
+    }
+
+    @POST
     @Consumes({MediaType.APPLICATION_FORM_URLENCODED})
     public Form add(@FormParam("name") String name, @FormParam("jsonData") String jsonData) {
         Form form = new Form()
@@ -50,6 +57,15 @@ public class FormsResource {
                 .setJsonData(jsonData);
         long newId = formDAO.insert(form);
         return form.setId(newId);
+    }
+
+    @PUT
+    @Path("/{id}")
+    @Consumes({MediaType.APPLICATION_JSON})
+    public Form update(@PathParam("id") Integer id, @Valid Form form) {
+        form.setId(id);
+        formDAO.update(form);
+        return form;
     }
 
     @PUT
