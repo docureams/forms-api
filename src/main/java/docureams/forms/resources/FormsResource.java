@@ -16,7 +16,10 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.util.PDFMergerUtility;
 
 @Path("/forms")
-@Consumes({MediaType.APPLICATION_JSON})
+@Consumes({
+    MediaType.APPLICATION_JSON,
+    MediaType.APPLICATION_FORM_URLENCODED
+})
 @Produces({MediaType.APPLICATION_JSON})
 public class FormsResource {
 
