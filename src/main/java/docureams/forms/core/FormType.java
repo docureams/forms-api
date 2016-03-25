@@ -36,9 +36,37 @@ public class FormType implements Serializable {
         public String fullyQualifiedFieldName;
         public String alternateFieldName;
         public String fieldType;
+        
+        public PDFieldDescriptor() {
+        }
+        
         public PDFieldDescriptor(String fullyQualifiedFieldName, String alternateFieldName, String fieldType) {
             this.fullyQualifiedFieldName = fullyQualifiedFieldName;
             this.alternateFieldName = alternateFieldName;
+            this.fieldType = fieldType;
+        }
+
+        public String getFullyQualifiedFieldName() {
+            return fullyQualifiedFieldName;
+        }
+
+        public void setFullyQualifiedFieldName(String fullyQualifiedFieldName) {
+            this.fullyQualifiedFieldName = fullyQualifiedFieldName;
+        }
+
+        public String getAlternateFieldName() {
+            return alternateFieldName;
+        }
+
+        public void setAlternateFieldName(String alternateFieldName) {
+            this.alternateFieldName = alternateFieldName;
+        }
+
+        public String getFieldType() {
+            return fieldType;
+        }
+
+        public void setFieldType(String fieldType) {
             this.fieldType = fieldType;
         }
     }
