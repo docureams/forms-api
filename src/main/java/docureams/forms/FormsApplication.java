@@ -4,7 +4,6 @@ import docureams.forms.db.FormDAO;
 import docureams.forms.db.FormTypeDAO;
 import docureams.forms.resources.FormTypesResource;
 import docureams.forms.resources.FormsResource;
-import docureams.forms.resources.JacksonJsonParamConverterProvider;
 import io.dropwizard.Application;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.flyway.FlywayBundle;

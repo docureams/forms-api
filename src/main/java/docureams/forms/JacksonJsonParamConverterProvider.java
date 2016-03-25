@@ -1,4 +1,4 @@
-package docureams.forms.resources;
+package docureams.forms;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
