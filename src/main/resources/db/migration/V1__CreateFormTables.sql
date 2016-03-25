@@ -17,7 +17,7 @@ CREATE TABLE form (
 INSERT INTO form_type (name, description, pdf_template, json_metadata) VALUES (
 'f1094b',
 '1094-B – Transmittal of Health Coverage Information Returns – Used by IRS in the enforcement of the Individual Mandate. Filed by insurance carrier or self-insured plan. Transmitted to the IRS. <a href="https://www.irs.gov/pub/irs-pdf/f1094b.pdf"/>',
-'c:\scheduler\forms\f1094b.pdf',
+'c:\\scheduler\\forms\\f1094b.pdf',
 '{
 "Name":{"fullyQualifiedFieldName":"topmostSubform[0].Page1[0].f1_01[0]", "alternateFieldName":"", "fieldType":"org.apache.pdfbox.pdmodel.interactive.form.PDTextbox"}, 
 "EIN":{"fullyQualifiedFieldName":"topmostSubform[0].Page1[0].f1_02[0]", "alternateFieldName":"", "fieldType":"org.apache.pdfbox.pdmodel.interactive.form.PDTextbox"}, 
@@ -34,7 +34,7 @@ INSERT INTO form_type (name, description, pdf_template, json_metadata) VALUES (
 INSERT INTO form_type (name, description, pdf_template, json_metadata) VALUES (
 'f1094c',
 '1094-C – Transmittal of Employer Provided Health Insurance Offer and Coverage Information Returns. Used by the IRS in the enforcement of the Employer Mandate. Filed by Applicable Large Employers to IRS. <a href="https://www.irs.gov/pub/irs-pdf/f1094c.pdf"/>',
-'c:\scheduler\forms\f1094c.pdf',
+'c:\\scheduler\\forms\\f1094c.pdf',
 '{
 "Corrected":{"fullyQualifiedFieldName":"topmostSubform[0].Page1[0].c1_01_CORRECTED[0]", "alternateFieldName":"", "fieldType":"org.apache.pdfbox.pdmodel.interactive.form.PDCheckbox"},
 "EmployerName":{"fullyQualifiedFieldName":"topmostSubform[0].Page1[0].Name[0].f1_01[0]", "alternateFieldName":"", "fieldType":"org.apache.pdfbox.pdmodel.interactive.form.PDTextbox"},
@@ -207,7 +207,7 @@ INSERT INTO form_type (name, description, pdf_template, json_metadata) VALUES (
 INSERT INTO form_type (name, description, pdf_template, json_metadata) VALUES (
 'f1095b',
 '1095-B – Health Coverage – Used by IRS in the enforcement of the Individual Mandate. Filed by the insurance carrier or self-insured plan by non-ALE. Transmitted to the IRS. <a href="https://www.irs.gov/pub/irspdf/f1095b.pdf"/>',
-'c:\scheduler\forms\f1095b.pdf',
+'c:\\scheduler\\forms\\f1095b.pdf',
 '{
 "Void":{"fullyQualifiedFieldName":"topmostSubform[0].Page1[0].PageOneHeader[0].Void[0]", "alternateFieldName":"", "fieldType":"org.apache.pdfbox.pdmodel.interactive.form.PDCheckbox"},
 "Corrected":{"fullyQualifiedFieldName":"topmostSubform[0].Page1[0].PageOneHeader[0].Corrected[0]", "alternateFieldName":"", "fieldType":"org.apache.pdfbox.pdmodel.interactive.form.PDCheckbox"},
@@ -529,7 +529,7 @@ INSERT INTO form_type (name, description, pdf_template, json_metadata) VALUES (
 INSERT INTO form_type (name, description, pdf_template, json_metadata) VALUES (
 'f1095c',
 '1095-C – Employer Provided Health Insurance Offer and Coverage – Used by the IRS in the enforcement of the Employer Mandate. Transmitted to the IRS and to employees eligible for coverage by Applicable Large Employer. <a href="https://www.irs.gov/pub/irs-pdf/f1095c.pdf"/>',
-'c:\scheduler\forms\f1095c.pdf',
+'c:\\scheduler\\forms\\f1095c.pdf',
 '{
 "Void":{"fullyQualifiedFieldName":"topmostSubform[0].Page1[0].c1_01_VOID[0]", "alternateFieldName":"", "fieldType":"org.apache.pdfbox.pdmodel.interactive.form.PDCheckbox"},
 "Corrected":{"fullyQualifiedFieldName":"topmostSubform[0].Page1[0].c1_02_CORRECTED[0]", "alternateFieldName":"", "fieldType":"org.apache.pdfbox.pdmodel.interactive.form.PDCheckbox"},
@@ -882,7 +882,7 @@ INSERT INTO form_type (name, description, pdf_template, json_metadata) VALUES (
 INSERT INTO form_type (name, description, pdf_template, json_metadata) VALUES (
 'f1095c_page1',
 '1095-C – Employer Provided Health Insurance Offer and Coverage – Used by the IRS in the enforcement of the Employer Mandate. Transmitted to the IRS and to employees eligible for coverage by Applicable Large Employer. <a href="https://www.irs.gov/pub/irs-pdf/f1095c.pdf"/>',
-'c:\scheduler\forms\f1095c-page1.pdf',
+'c:\\scheduler\\forms\\f1095c-page1.pdf',
 '{
 "Void":{"fullyQualifiedFieldName":"topmostSubform[0].Page1[0].c1_01_VOID[0]", "alternateFieldName":"", "fieldType":"org.apache.pdfbox.pdmodel.interactive.form.PDCheckbox"},
 "Corrected":{"fullyQualifiedFieldName":"topmostSubform[0].Page1[0].c1_02_CORRECTED[0]", "alternateFieldName":"", "fieldType":"org.apache.pdfbox.pdmodel.interactive.form.PDCheckbox"},

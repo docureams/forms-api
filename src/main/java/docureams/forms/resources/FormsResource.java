@@ -94,7 +94,7 @@ public class FormsResource {
     }
     
     @GET
-    @Path("/{id}/pdf")
+    @Path("/pdf")
     @Produces("application/pdf")
     public Response mergeAsPdf(
             @QueryParam("ids") String ids, 
