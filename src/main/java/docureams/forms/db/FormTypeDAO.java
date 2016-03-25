@@ -19,7 +19,7 @@ public interface FormTypeDAO {
     @SqlQuery("select * from FORMTYPE where NAME = :name")
     FormType findByName(@Bind("name") String name);
 
-    @SqlUpdate("update into FORMTYPE set NAME = :name where ID = :id")
+    @SqlUpdate("update FORMTYPE set NAME = :name where ID = :id")
     long update(@BindBean FormType formType);
 
     @GetGeneratedKeys
