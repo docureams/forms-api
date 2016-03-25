@@ -1,7 +1,6 @@
 package docureams.forms.core;
 
 import java.io.Serializable;
-import javax.ws.rs.FormParam;
 
 public class Form implements Serializable {
     private long id;
@@ -31,7 +30,6 @@ public class Form implements Serializable {
         return name;
     }
 
-    @FormParam("form.name")
     public Form setName(String name) {
         this.name = name;
         return this;
@@ -41,7 +39,6 @@ public class Form implements Serializable {
         return jsonData;
     }
 
-    @FormParam("form.jsonData")
     public Form setJsonData(String jsonData) {
         this.jsonData = jsonData;
         return this;

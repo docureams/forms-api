@@ -44,7 +44,10 @@ public class FormsResource {
 
     @POST
     @Consumes({MediaType.APPLICATION_FORM_URLENCODED})
-    public Form add(@Valid @BeanParam Form form) {
+    public Form add(@FormParam("name") String name, @FormParam("jsonData") String jsonData) {
+        Form form = new Form()
+                .setName(name)
+                .setJsonData(jsonData);
         long newId = formDAO.insert(form);
         return form.setId(newId);
     }
@@ -52,8 +55,11 @@ public class FormsResource {
     @PUT
     @Path("/{id}")
     @Consumes({MediaType.APPLICATION_FORM_URLENCODED})
-    public Form update(@PathParam("id") Integer id, @Valid @BeanParam Form form) {
-        form = form.setId(id);
+    public Form update(@PathParam("id") Integer id, @FormParam("name") String name, @FormParam("jsonData") String jsonData) {
+        Form form = new Form()
+                .setId(id)
+                .setName(name)
+                .setJsonData(jsonData);
         formDAO.update(form);
         return form;
     }
