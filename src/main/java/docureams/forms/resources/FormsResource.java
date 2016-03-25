@@ -51,7 +51,9 @@ public class FormsResource {
 
     @POST
     @Consumes({MediaType.APPLICATION_FORM_URLENCODED})
-    public Form add(@FormParam("name") String name, @FormParam("jsonData") String jsonData) {
+    public Form add(
+            @FormParam("name") String name, 
+            @FormParam("jsonData") String jsonData) {
         Form form = new Form()
                 .setName(name)
                 .setJsonData(jsonData);
@@ -62,7 +64,9 @@ public class FormsResource {
     @PUT
     @Path("/{id}")
     @Consumes({MediaType.APPLICATION_JSON})
-    public Form update(@PathParam("id") Integer id, @Valid Form form) {
+    public Form update(
+            @PathParam("id") Integer id, 
+            @Valid Form form) {
         form.setId(id);
         formDAO.update(form);
         return form;
@@ -71,7 +75,10 @@ public class FormsResource {
     @PUT
     @Path("/{id}")
     @Consumes({MediaType.APPLICATION_FORM_URLENCODED})
-    public Form update(@PathParam("id") Integer id, @FormParam("name") String name, @FormParam("jsonData") String jsonData) {
+    public Form update(
+            @PathParam("id") Integer id, 
+            @FormParam("name") String name, 
+            @FormParam("jsonData") String jsonData) {
         Form form = new Form()
                 .setId(id)
                 .setName(name)
@@ -89,7 +96,9 @@ public class FormsResource {
     @GET
     @Path("/{id}/pdf")
     @Produces("application/pdf")
-    public Response mergeAsPdf(@QueryParam("ids") String ids, @QueryParam("filename") String filename) {
+    public Response mergeAsPdf(
+            @QueryParam("ids") String ids, 
+            @QueryParam("filename") String filename) {
         try {
             PDDocument destination = null;
             PDFMergerUtility merger = new PDFMergerUtility();

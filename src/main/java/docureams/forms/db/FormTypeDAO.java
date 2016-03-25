@@ -19,10 +19,10 @@ public interface FormTypeDAO {
     @SqlQuery("SELECT * FROM form_type WHERE name = :name")
     FormType findByName(@Bind("name") String name);
 
-    @SqlUpdate("UPDATE form_type SET name = :name, description = :description, pdf_template = :pdf_template, json_metadata = :json_metadata WHERE id = :id")
+    @SqlUpdate("UPDATE form_type SET name = :name, description = :description, pdf_template = :pdfTemplate, json_metadata = :jsonMetadata WHERE id = :id")
     long update(@BindBean FormType formType);
 
     @GetGeneratedKeys
-    @SqlUpdate("INSERT INTO form_type (id, name, description, pdf_template, json_metadata) VALUES (:id, :name, :description, :pdf_template, :json_metadata)")
+    @SqlUpdate("INSERT INTO form_type (id, name, description, pdf_template, json_metadata) VALUES (:id, :name, :description, :pdfTemplate, :jsonMetadata)")
     long insert(@BindBean FormType formType);
 }

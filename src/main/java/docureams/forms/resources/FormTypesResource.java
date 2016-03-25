@@ -10,7 +10,6 @@ import java.util.List;
 import javax.ws.rs.core.Response;
 
 @Path("/formTypes")
-@Consumes({MediaType.APPLICATION_JSON})
 @Produces({MediaType.APPLICATION_JSON})
 public class FormTypesResource {
 
@@ -36,15 +35,52 @@ public class FormTypesResource {
     }
 
     @POST
+    @Consumes({MediaType.APPLICATION_JSON})
     public FormType add(@Valid FormType formType) {
+        long newId = formTypeDAO.insert(formType);
+        return formType.setId(newId);
+    }
+
+    @POST
+    @Consumes({MediaType.APPLICATION_FORM_URLENCODED})
+    public FormType add(
+            @FormParam("name") String name, 
+            @FormParam("description") String description,
+            @FormParam("pdfTemplate") String pdfTemplate,
+            @FormParam("jsonMetadata") String jsonMetadata) {
+        FormType formType = new FormType()
+                .setName(name)
+                .setDescription(description)
+                .setPdfTemplate(pdfTemplate)
+                .setJsonMetadata(jsonMetadata);
         long newId = formTypeDAO.insert(formType);
         return formType.setId(newId);
     }
 
     @PUT
     @Path("/{name}")
-    public FormType update(@PathParam("name") String name, @Valid FormType formType) {
+    @Consumes({MediaType.APPLICATION_JSON})
+    public FormType update(
+            @PathParam("name") String name, 
+            @Valid FormType formType) {
         formType = formType.setName(name);
+        formTypeDAO.update(formType);
+        return formType;
+    }
+
+    @PUT
+    @Path("/{name}")
+    @Consumes({MediaType.APPLICATION_FORM_URLENCODED})
+    public FormType update(
+            @PathParam("name") String name,
+            @FormParam("description") String description,
+            @FormParam("pdfTemplate") String pdfTemplate,
+            @FormParam("jsonMetadata") String jsonMetadata) {
+        FormType formType = new FormType()
+                .setName(name)
+                .setDescription(description)
+                .setPdfTemplate(pdfTemplate)
+                .setJsonMetadata(jsonMetadata);
         formTypeDAO.update(formType);
         return formType;
     }
