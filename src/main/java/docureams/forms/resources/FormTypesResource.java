@@ -27,14 +27,17 @@ public class FormTypesResource {
 
     @GET
     @Path("/{name}")
-    public FormType get(@PathParam("name") String name){
-        return formTypeDAO.findByName(name);
+    public Response get(@PathParam("name") String name){
+        FormType formType = formTypeDAO.findByName(name);
+        if (formType == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        return Response.ok(formType).build();
     }
 
     @POST
     public FormType add(@Valid FormType formType) {
         long newId = formTypeDAO.insert(formType);
-
         return formType.setId(newId);
     }
 
@@ -43,7 +46,6 @@ public class FormTypesResource {
     public FormType update(@PathParam("name") String name, @Valid FormType formType) {
         formType = formType.setName(name);
         formTypeDAO.update(formType);
-
         return formType;
     }
     
@@ -51,15 +53,20 @@ public class FormTypesResource {
     @GET
     @Path("/{name}/asp")
     public Response getClientSdkForAsp(@PathParam("name") String name) {
-        String contents = formTypeDAO.findByName(name).generateClientSdkForAsp();
-        if (contents != null) {
-            return Response
-                .ok(contents.getBytes(StandardCharsets.UTF_8))
-                .header("content-disposition","attachment; filename = " + name.toUpperCase() + ".asp")
-                .build();
-        } else {
+        FormType formType = formTypeDAO.findByName(name);
+        if (formType == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        
+        String contents = formType.generateClientSdkForAsp();
+        if (contents == null) {
             return Response.serverError().build();
         }
+        
+        return Response
+            .ok(contents.getBytes(StandardCharsets.UTF_8))
+            .header("content-disposition","attachment; filename = " + name.toUpperCase() + ".asp")
+            .build();
     }
 
 }

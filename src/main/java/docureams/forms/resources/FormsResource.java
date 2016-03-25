@@ -35,14 +35,17 @@ public class FormsResource {
 
     @GET
     @Path("/{id}")
-    public Form get(@PathParam("id") Integer id){
-        return formDAO.findById(id);
+    public Response get(@PathParam("id") Integer id){
+        Form form = formDAO.findById(id);
+        if (form == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        return Response.ok(form).build();
     }
 
     @POST
     public Form add(@Valid Form form) {
         long newId = formDAO.insert(form);
-
         return form.setId(newId);
     }
 
@@ -51,7 +54,6 @@ public class FormsResource {
     public Form update(@PathParam("id") Integer id, @Valid Form form) {
         form = form.setId(id);
         formDAO.update(form);
-
         return form;
     }
 
@@ -92,6 +94,7 @@ public class FormsResource {
             tempFile.deleteOnExit();
             destination.save(tempFile.getCanonicalPath());
             destination.close();
+            
             return Response
                 .ok(tempFile)
                 .header("content-type", "application/pdf")
