@@ -48,7 +48,7 @@ public class FormsApplication extends Application<FormsConfiguration> {
         final FormTypeDAO formTypeDao = jdbi.onDemand(FormTypeDAO.class);
         final FormDAO formDao = jdbi.onDemand(FormDAO.class);
         environment.jersey().register(new FormTypesResource(formTypeDao));
-        environment.jersey().register(new FormsResource(formDao));
+        environment.jersey().register(new FormsResource(formDao, formTypeDao));
         
         Flyway flyway = new Flyway();
         flyway.setDataSource(config.getDataSourceFactory().getUrl(), config.getDataSourceFactory().getUser(), config.getDataSourceFactory().getPassword());
