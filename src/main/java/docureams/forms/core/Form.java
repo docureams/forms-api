@@ -5,13 +5,10 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.PathParam;
 
 public class Form implements Serializable {
-    @PathParam("id")
     private long id;
     
-    @FormParam("form.name")
     private String name;
     
-    @FormParam("form.jsonData")
     private String jsonData;
 
     public Form() {
@@ -26,6 +23,7 @@ public class Form implements Serializable {
         return id;
     }
 
+    @PathParam("id")
     public Form setId(long id) {
         this.id = id;
         return this;
@@ -35,6 +33,7 @@ public class Form implements Serializable {
         return name;
     }
 
+    @FormParam("form.name")
     public Form setName(String name) {
         this.name = name;
         return this;
@@ -44,6 +43,7 @@ public class Form implements Serializable {
         return jsonData;
     }
 
+    @FormParam("form.jsonData")
     public Form setJsonData(String jsonData) {
         this.jsonData = jsonData;
         return this;
