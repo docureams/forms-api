@@ -4,6 +4,7 @@ import docureams.forms.db.FormDAO;
 import docureams.forms.db.FormTypeDAO;
 import docureams.forms.resources.FormTypesResource;
 import docureams.forms.resources.FormsResource;
+import docureams.forms.resources.JacksonJsonParamConverterProvider;
 import io.dropwizard.Application;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.flyway.FlywayBundle;
@@ -49,6 +50,7 @@ public class FormsApplication extends Application<FormsConfiguration> {
         final FormDAO formDao = jdbi.onDemand(FormDAO.class);
         environment.jersey().register(new FormTypesResource(formTypeDao));
         environment.jersey().register(new FormsResource(formDao, formTypeDao));
+        environment.jersey().register(JacksonJsonParamConverterProvider.class);
         
         Flyway flyway = new Flyway();
         flyway.setDataSource(config.getDataSourceFactory().getUrl(), config.getDataSourceFactory().getUser(), config.getDataSourceFactory().getPassword());
