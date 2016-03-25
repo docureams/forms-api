@@ -13,19 +13,19 @@ import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 @RegisterMapper(FormMapper.class)
 public interface FormDAO {
 
-    @SqlQuery("select * from FORM")
+    @SqlQuery("SELECT * FROM form")
     List<Form> getAll();
 
-    @SqlQuery("select * from FORM where ID = :id")
+    @SqlQuery("SELECT * FROM form WHERE id = :id")
     Form findById(@Bind("id") long id);
 
-    @SqlUpdate("delete from FORM where ID = :id")
+    @SqlUpdate("DELETE FROM form WHERE id = :id")
     long deleteById(@Bind("id") long id);
 
-    @SqlUpdate("update into FORM set NAME = :name where ID = :id")
+    @SqlUpdate("UPDATE form SET name = :name WHERE id = :id")
     long update(@BindBean Form form);
 
     @GetGeneratedKeys
-    @SqlUpdate("insert into FORM (ID, NAME) values (:id, :name)")
+    @SqlUpdate("INSERT INTO form (id, name) VALUES (:id, :name)")
     long insert(@BindBean Form form);
 }

@@ -12,7 +12,7 @@ public class FormMapper implements ResultSetMapper<Form>
     public Form map(int index, ResultSet resultSet, StatementContext statementContext) throws SQLException
     {
         return new Form()
-                .setId(resultSet.getInt("ID"))
-                .setName(resultSet.getString("NAME"));
+                .setId(resultSet.getInt("id"))
+                .setName(resultSet.getString("name"));
     }
 }
