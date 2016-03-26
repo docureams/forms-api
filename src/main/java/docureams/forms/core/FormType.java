@@ -27,7 +27,7 @@ public class FormType implements Serializable {
     
     private String description;
 
-    private String pdfTemplate;
+    private File pdfTemplate;
 
     private String jsonMetadata;
 
@@ -95,7 +95,7 @@ public class FormType implements Serializable {
     public FormType() {
     }
 
-    public FormType(String name, String description, String jsonMetadata, String pdfTemplate) {
+    public FormType(String name, String description, String jsonMetadata, File pdfTemplate) {
         this.name = name;
         this.description = description;
         this.jsonMetadata = jsonMetadata;
@@ -129,11 +129,11 @@ public class FormType implements Serializable {
         return this;
     }
 
-    public String getPdfTemplate() {
+    public File getPdfTemplate() {
         return pdfTemplate;
     }
 
-    public FormType setPdfTemplate(String pdfTemplate) {
+    public FormType setPdfTemplate(File pdfTemplate) {
         this.pdfTemplate = pdfTemplate;
         return this;
     }
@@ -287,7 +287,7 @@ public class FormType implements Serializable {
         public PDDocument doJobWithResult() {
             PDDocument document = null;
             try {
-                document = PDDocument.load(new File(pdfTemplate));
+                document = PDDocument.load(pdfTemplate);
                 PDAcroForm acroForm = document.getDocumentCatalog().getAcroForm();
                 if (acroForm != null) {
                     for (String fieldKey : this.dataMap.keySet()) {

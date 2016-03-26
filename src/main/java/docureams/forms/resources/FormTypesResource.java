@@ -2,6 +2,7 @@ package docureams.forms.resources;
 
 import docureams.forms.core.FormType;
 import docureams.forms.db.FormTypeDAO;
+import java.io.File;
 import java.nio.charset.StandardCharsets;
 import javax.validation.Valid;
 import javax.ws.rs.*;
@@ -42,11 +43,11 @@ public class FormTypesResource {
     }
 
     @POST
-    @Consumes({MediaType.APPLICATION_FORM_URLENCODED})
+    @Consumes({MediaType.MULTIPART_FORM_DATA})
     public FormType add(
             @FormParam("name") String name, 
             @FormParam("description") String description,
-            @FormParam("pdfTemplate") String pdfTemplate,
+            @FormParam("pdfTemplate") File pdfTemplate,
             @FormParam("jsonMetadata") String jsonMetadata) {
         FormType formType = new FormType()
                 .setName(name)
@@ -70,11 +71,11 @@ public class FormTypesResource {
 
     @PUT
     @Path("/{name}")
-    @Consumes({MediaType.APPLICATION_FORM_URLENCODED})
+    @Consumes({MediaType.MULTIPART_FORM_DATA})
     public FormType update(
             @PathParam("name") String name,
             @FormParam("description") String description,
-            @FormParam("pdfTemplate") String pdfTemplate,
+            @FormParam("pdfTemplate") File pdfTemplate,
             @FormParam("jsonMetadata") String jsonMetadata) {
         FormType formType = new FormType()
                 .setName(name)
