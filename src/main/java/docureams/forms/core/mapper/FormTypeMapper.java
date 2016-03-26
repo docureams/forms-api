@@ -19,7 +19,13 @@ public class FormTypeMapper implements ResultSetMapper<FormType>
     @Override
     public FormType map(int index, ResultSet resultSet, StatementContext statementContext) throws SQLException
     {
-        File pdfTemplate = new File(resultSet.getString("name")+".pdf");
+        File pdfTemplate = null;
+        try {
+            pdfTemplate = File.createTempFile(resultSet.getString("name"), ".pdf");
+        } catch (IOException ex) {
+            Logger.getLogger(FormTypeMapper.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        pdfTemplate.deleteOnExit();
         try (
             InputStream inputStream = resultSet.getBinaryStream("pdfTemplate");
             OutputStream outputStream = new FileOutputStream(pdfTemplate)
