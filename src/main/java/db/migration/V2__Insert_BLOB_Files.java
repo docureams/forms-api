@@ -5,7 +5,7 @@ import org.flywaydb.core.api.migration.jdbc.JdbcMigration;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 
-public class V2__InsertBLOBFiles implements JdbcMigration {
+public class V2__Insert_BLOB_Files implements JdbcMigration {
 
     @Override
     public void migrate(Connection connection) throws Exception {
