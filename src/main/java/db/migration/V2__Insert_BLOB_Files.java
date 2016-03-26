@@ -17,7 +17,7 @@ public class V2__Insert_BLOB_Files implements JdbcMigration {
     }
     
     private void loadFile(Connection connection, String name, String filename) throws Exception {
-        PreparedStatement statement = connection.prepareStatement("UPDATE form SET pdf_template = ? WHERE name = ?");
+        PreparedStatement statement = connection.prepareStatement("UPDATE form_type SET pdf_template = ? WHERE name = ?");
         InputStream stream = null;
         try {
             stream = this.getClass().getClassLoader().getResourceAsStream("assets/"+filename);
