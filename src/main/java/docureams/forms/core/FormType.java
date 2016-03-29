@@ -1,5 +1,6 @@
 package docureams.forms.core;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,11 +15,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
-import org.apache.pdfbox.pdmodel.common.COSObjectable;
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
-import org.apache.pdfbox.pdmodel.interactive.form.PDCheckbox;
+import org.apache.pdfbox.pdmodel.interactive.form.PDCheckBox;
 import org.apache.pdfbox.pdmodel.interactive.form.PDField;
-import org.apache.pdfbox.pdmodel.interactive.form.PDTextbox;
+import org.apache.pdfbox.pdmodel.interactive.form.PDTextField;
 
 public class FormType implements Serializable {
     private long id;
@@ -70,7 +70,7 @@ public class FormType implements Serializable {
         }
     }
 
-    private LinkedHashMap<String, PDFieldDescriptor> _metadataMap;
+    private transient LinkedHashMap<String, PDFieldDescriptor> _metadataMap;
     private LinkedHashMap<String, PDFieldDescriptor> metadataMap() throws IOException {
         if (_metadataMap == null) {
             ObjectMapper mapper = new ObjectMapper();
@@ -80,7 +80,7 @@ public class FormType implements Serializable {
         return _metadataMap;
     }
 
-    private LinkedHashMap<String, String> _reverseMap;
+    private transient LinkedHashMap<String, String> _reverseMap;
     private LinkedHashMap<String, String> reverseMap() throws IOException {
         if (_reverseMap == null) {
             _reverseMap = new LinkedHashMap<>();
@@ -129,10 +129,12 @@ public class FormType implements Serializable {
         return this;
     }
 
+    @JsonIgnore
     public File getPdfTemplate() {
         return pdfTemplate;
     }
 
+    @JsonIgnore
     public FormType setPdfTemplate(File pdfTemplate) {
         this.pdfTemplate = pdfTemplate;
         return this;
@@ -163,7 +165,7 @@ public class FormType implements Serializable {
         LinkedHashMap<String, Object> dataMap = new LinkedHashMap<>();
         for (String fieldKey : metadataMap().keySet()) {
             PDFieldDescriptor fieldDesc = metadataMap().get(fieldKey);
-            dataMap.put(fieldKey, fieldDesc.fieldType.endsWith("PDCheckbox") ? false : "");
+            dataMap.put(fieldKey, fieldDesc.fieldType.endsWith("PDCheckBox") ? false : "");
         }
 
         return new ObjectMapper().writeValueAsString(dataMap);
@@ -200,7 +202,7 @@ public class FormType implements Serializable {
                         if (types.get(vbt.typeName) == null) {
                             types.put(vbt.typeName, new LinkedHashMap<String, vbType>());
                         }
-                    } else if (fieldDesc.fieldType.endsWith("PDCheckbox")) {
+                    } else if (fieldDesc.fieldType.endsWith("PDCheckBox")) {
                         memberName = token;
                         vbt.typeName = "Boolean";
                     } else {
@@ -235,7 +237,7 @@ public class FormType implements Serializable {
             }
             for (String fieldKey : metadataMap().keySet()) {
                 PDFieldDescriptor fieldDesc = metadataMap().get(fieldKey);
-                builder.append("    ").append(fieldKey.replace('[','(').replace(']',')')).append(" = ").append(fieldDesc.fieldType.endsWith("PDCheckbox") ? "False\n" : "\"\"\n");
+                builder.append("    ").append(fieldKey.replace('[','(').replace(']',')')).append(" = ").append(fieldDesc.fieldType.endsWith("PDCheckBox") ? "False\n" : "\"\"\n");
             }
             builder.append("  End Sub\n\n");
             builder.append("  Public Function toDictionary()\n");
@@ -292,15 +294,15 @@ public class FormType implements Serializable {
                 if (acroForm != null) {
                     for (String fieldKey : this.dataMap.keySet()) {
                         PDFieldDescriptor fieldDesc = metadataMap().get(fieldKey);
-                        if (fieldDesc.fieldType.endsWith("PDCheckbox")) {
-                            PDCheckbox field = (PDCheckbox) acroForm.getField(fieldDesc.fullyQualifiedFieldName);
+                        if (fieldDesc.fieldType.endsWith("PDCheckBox")) {
+                            PDCheckBox field = (PDCheckBox) acroForm.getField(fieldDesc.fullyQualifiedFieldName);
                             if ((Boolean)(this.dataMap.get(fieldKey))) {
                                 field.check();
                             } else {
                                 field.unCheck();
                             }
-                        } else if (fieldDesc.fieldType.endsWith("PDTextbox")) {
-                            PDTextbox field = (PDTextbox) acroForm.getField(fieldDesc.fullyQualifiedFieldName);
+                        } else if (fieldDesc.fieldType.endsWith("PDTextField")) {
+                            PDTextField field = (PDTextField) acroForm.getField(fieldDesc.fullyQualifiedFieldName);
                             Object value = this.dataMap.get(fieldKey);
                             field.setValue(value != null ? value.toString() : "");
                         }
@@ -333,7 +335,7 @@ public class FormType implements Serializable {
                 Iterator fieldsIter = fields.iterator();
                 while (fieldsIter.hasNext()) {
                     PDField field = (PDField) fieldsIter.next();
-                    processField(field, field.getPartialName());
+                    processField(field);
                 }
                 return new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(dataMap);
             } catch (Exception ex) {
@@ -349,34 +351,16 @@ public class FormType implements Serializable {
             }
         }
 
-        private void processField(PDField field, String sParent) throws IOException {
-            List<COSObjectable> kids = field.getKids();
-            String partialName = field.getPartialName();
-            if (kids != null) {
-                Iterator<COSObjectable> kidsIter = kids.iterator();
-                if (!sParent.equals(partialName)) {
-                    if (partialName != null) {
-                        sParent = sParent + "." + partialName;
-                    }
-                }
-                while (kidsIter.hasNext()) {
-                    Object pdfObj = kidsIter.next();
-                    if (pdfObj instanceof PDField) {
-                        PDField kid = (PDField) pdfObj;
-                        processField(kid, sParent);
-                    }
-                }
-            } else {
-                Object fieldValue = null;
-                if (field instanceof PDTextbox) {
-                    fieldValue = field.getValue();
-                } else if (field instanceof PDCheckbox) {
-                    fieldValue = ((PDCheckbox) field).isChecked();
-                }
-                
-                if (fieldValue != null) {
-                    dataMap.put(reverseMap().get(field.getFullyQualifiedName()), fieldValue);
-                }
+        private void processField(PDField field) throws IOException {
+            Object fieldValue = null;
+            if (field instanceof PDTextField) {
+                fieldValue = field.getValueAsString();
+            } else if (field instanceof PDCheckBox) {
+                fieldValue = ((PDCheckBox) field).isChecked();
+            }
+
+            if (fieldValue != null) {
+                dataMap.put(reverseMap().get(field.getFullyQualifiedName()), fieldValue);
             }
         }
     }
@@ -401,7 +385,7 @@ public class FormType implements Serializable {
                 Iterator fieldsIter = fields.iterator();
                 while (fieldsIter.hasNext()) {
                     PDField field = (PDField) fieldsIter.next();
-                    processField(field, field.getPartialName());
+                    processField(field);
                     if (fieldsIter.hasNext()) {
                         outputString.append(",");
                     }
@@ -423,40 +407,19 @@ public class FormType implements Serializable {
             }
         }
 
-        private void processField(PDField field, String sParent) throws IOException {
-            List<COSObjectable> kids = field.getKids();
-            String partialName = field.getPartialName();
-            if (kids != null) {
-                Iterator<COSObjectable> kidsIter = kids.iterator();
-                if (!sParent.equals(partialName)) {
-                    if (partialName != null) {
-                        sParent = sParent + "." + partialName;
-                    }
-                }
-                while (kidsIter.hasNext()) {
-                    Object pdfObj = kidsIter.next();
-                    if (pdfObj instanceof PDField) {
-                        PDField kid = (PDField) pdfObj;
-                        processField(kid, sParent);
-                    }
-                }
-            } else {
-                String alternateFieldName = field.getAlternateFieldName();
-                String fieldValue = null;
-                if (field instanceof PDTextbox) {
-                    fieldValue = field.getValue();
-                } else if (field instanceof PDCheckbox) {
-                    fieldValue = "checkbox";
-                }
-                
-                outputString.append("\"").append(fieldValue).append("\":{\"fullyQualifiedFieldName\":\"").append(sParent);
-                if (partialName != null)
-                {
-                    outputString.append(".").append(partialName);
-                }
-                outputString.append("\", \"alternateFieldName\":\"").append(alternateFieldName == null ? "" : alternateFieldName).append("\", ");
-                outputString.append("\"fieldType\":\"").append(field.getClass().getName()).append("\"}\n");
+        private void processField(PDField field) throws IOException {
+            String fullyQualifiedName = field.getFullyQualifiedName();
+            String alternateFieldName = field.getAlternateFieldName();
+            String fieldValue = null;
+            if (field instanceof PDTextField) {
+                fieldValue = field.getValueAsString();
+            } else if (field instanceof PDCheckBox) {
+                fieldValue = "checkbox";
             }
+
+            outputString.append("\"").append(fieldValue).append("\":{\"fullyQualifiedFieldName\":\"").append(fullyQualifiedName).append("\", ");
+            outputString.append("\"alternateFieldName\":\"").append(alternateFieldName == null ? "" : alternateFieldName).append("\", ");
+            outputString.append("\"fieldType\":\"").append(field.getClass().getName()).append("\"}\n"); 
         }
     }
 }
