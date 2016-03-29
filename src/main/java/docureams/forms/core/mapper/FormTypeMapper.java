@@ -27,7 +27,7 @@ public class FormTypeMapper implements ResultSetMapper<FormType>
         }
         pdfTemplate.deleteOnExit();
         try (
-            InputStream inputStream = resultSet.getBinaryStream("pdfTemplate");
+            InputStream inputStream = resultSet.getBinaryStream("pdf_template");
             OutputStream outputStream = new FileOutputStream(pdfTemplate)
         ) {
             int bytesRead = -1;
