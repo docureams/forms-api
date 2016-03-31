@@ -9,6 +9,7 @@ import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.flyway.FlywayBundle;
 import io.dropwizard.flyway.FlywayFactory;
 import io.dropwizard.jdbi.DBIFactory;
+import io.dropwizard.jdbi.DBIHealthCheck;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.flywaydb.core.Flyway;
@@ -49,7 +50,8 @@ public class FormsApplication extends Application<FormsConfiguration> {
         final FormDAO formDao = jdbi.onDemand(FormDAO.class);
         environment.jersey().register(new FormTypesResource(formTypeDao));
         environment.jersey().register(new FormsResource(formDao, formTypeDao));
-        
+        environment.healthChecks().register("database", new DBIHealthCheck(jdbi, config.getDataSourceFactory().getValidationQuery()));
+
         Flyway flyway = new Flyway();
         flyway.setDataSource(config.getDataSourceFactory().getUrl(), config.getDataSourceFactory().getUser(), config.getDataSourceFactory().getPassword());
         flyway.migrate();
