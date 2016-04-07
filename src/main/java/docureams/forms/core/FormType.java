@@ -7,12 +7,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
@@ -26,10 +28,28 @@ public class FormType implements Serializable {
     private String name;
     
     private String description;
-
+    
     private File pdfTemplate;
+    
+    private String pageFilter = "all";
 
     private String jsonMetadata;
+
+    private transient List<Integer> _unwantedPages;
+    private List<Integer> unwantedPages(int pageCount) {
+        if (_unwantedPages == null) {
+            _unwantedPages = new ArrayList<>();
+            if (!"all".equalsIgnoreCase(pageFilter)) {
+                Pattern pattern = Pattern.compile(pageFilter);
+                for (Integer idx = pageCount - 1; idx >= 0; idx--) {
+                    if (!pattern.matcher(idx.toString()).matches()) {
+                        _unwantedPages.add(idx);
+                    }
+                }
+            }
+        }
+        return _unwantedPages;
+    }
 
     private static class PDFieldDescriptor {
         public String fullyQualifiedFieldName;
@@ -95,11 +115,12 @@ public class FormType implements Serializable {
     public FormType() {
     }
 
-    public FormType(String name, String description, String jsonMetadata, File pdfTemplate) {
+    public FormType(String name, String description, String jsonMetadata, File pdfTemplate, String pageFilter) {
         this.name = name;
         this.description = description;
         this.jsonMetadata = jsonMetadata;
         this.pdfTemplate = pdfTemplate;
+        this.pageFilter = pageFilter;
     }
     
     public long getId() {
@@ -129,6 +150,15 @@ public class FormType implements Serializable {
         return this;
     }
 
+    public String getJsonMetadata() {
+        return jsonMetadata;
+    }
+
+    public FormType setJsonMetadata(String jsonMetadata) {
+        this.jsonMetadata = jsonMetadata;
+        return this;
+    }
+
     @JsonIgnore
     public File getPdfTemplate() {
         return pdfTemplate;
@@ -140,12 +170,12 @@ public class FormType implements Serializable {
         return this;
     }
 
-    public String getJsonMetadata() {
-        return jsonMetadata;
+    public String getPageFilter() {
+        return pageFilter;
     }
 
-    public FormType setJsonMetadata(String jsonMetadata) {
-        this.jsonMetadata = jsonMetadata;
+    public FormType setPageFilter(String pageFilter) {
+        this.pageFilter = pageFilter;
         return this;
     }
 
@@ -307,6 +337,9 @@ public class FormType implements Serializable {
                             field.setValue(value != null ? value.toString() : "");
                         }
                     }
+                }
+                for (int idx : unwantedPages(document.getNumberOfPages())) {
+                    document.removePage(idx);
                 }
                 return document;
             } catch (Exception ex) {

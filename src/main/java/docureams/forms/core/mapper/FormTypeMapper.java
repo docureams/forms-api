@@ -46,6 +46,7 @@ public class FormTypeMapper implements ResultSetMapper<FormType>
                 .setName(resultSet.getString("name"))
                 .setDescription(resultSet.getString("description"))
                 .setPdfTemplate(pdfTemplate)
+                .setPageFilter(resultSet.getString("page_filter"))
                 .setJsonMetadata(resultSet.getString("json_metadata"));
     }
 }

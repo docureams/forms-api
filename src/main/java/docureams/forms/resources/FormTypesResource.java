@@ -48,11 +48,13 @@ public class FormTypesResource {
             @FormParam("name") String name, 
             @FormParam("description") String description,
             @FormParam("pdfTemplate") File pdfTemplate,
+            @FormParam("pageFilter") String pageFilter,
             @FormParam("jsonMetadata") String jsonMetadata) {
         FormType formType = new FormType()
                 .setName(name)
                 .setDescription(description)
                 .setPdfTemplate(pdfTemplate)
+                .setPageFilter(pageFilter)
                 .setJsonMetadata(jsonMetadata);
         long newId = formTypeDAO.insert(formType);
         return formType.setId(newId);
@@ -76,11 +78,13 @@ public class FormTypesResource {
             @PathParam("name") String name,
             @FormParam("description") String description,
             @FormParam("pdfTemplate") File pdfTemplate,
+            @FormParam("pageFilter") String pageFilter,
             @FormParam("jsonMetadata") String jsonMetadata) {
         FormType formType = new FormType()
                 .setName(name)
                 .setDescription(description)
                 .setPdfTemplate(pdfTemplate)
+                .setPageFilter(pageFilter)
                 .setJsonMetadata(jsonMetadata);
         formTypeDAO.update(formType);
         return formType;

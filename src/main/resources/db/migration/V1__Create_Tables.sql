@@ -3,6 +3,7 @@ CREATE TABLE form_type (
     name VARCHAR(255) NOT NULL,
     description TEXT NULL,
     pdf_template MEDIUMBLOB NULL,
+    page_filter VARCHAR(255) NULL,
     json_metadata MEDIUMTEXT NOT NULL,
     PRIMARY KEY (id)
 );
@@ -14,9 +15,10 @@ CREATE TABLE form (
     PRIMARY KEY (id)
 );
 
-INSERT INTO form_type (name, description, json_metadata) VALUES (
+INSERT INTO form_type (name, description, page_filter, json_metadata) VALUES (
 'f1094b',
 '1094-B – Transmittal of Health Coverage Information Returns – Used by IRS in the enforcement of the Individual Mandate. Filed by insurance carrier or self-insured plan. Transmitted to the IRS. <a href="https://www.irs.gov/pub/irs-pdf/f1094b.pdf"/>',
+'all',
 '{
 "Name":{"fullyQualifiedFieldName":"topmostSubform[0].Page1[0].f1_01[0]", "alternateFieldName":"", "fieldType":"org.apache.pdfbox.pdmodel.interactive.form.PDTextField"}, 
 "EIN":{"fullyQualifiedFieldName":"topmostSubform[0].Page1[0].f1_02[0]", "alternateFieldName":"", "fieldType":"org.apache.pdfbox.pdmodel.interactive.form.PDTextField"}, 
@@ -33,6 +35,7 @@ INSERT INTO form_type (name, description, json_metadata) VALUES (
 INSERT INTO form_type (name, description, json_metadata) VALUES (
 'f1094c',
 '1094-C – Transmittal of Employer Provided Health Insurance Offer and Coverage Information Returns. Used by the IRS in the enforcement of the Employer Mandate. Filed by Applicable Large Employers to IRS. <a href="https://www.irs.gov/pub/irs-pdf/f1094c.pdf"/>',
+'all',
 '{
 "Corrected":{"fullyQualifiedFieldName":"topmostSubform[0].Page1[0].c1_01_CORRECTED[0]", "alternateFieldName":"", "fieldType":"org.apache.pdfbox.pdmodel.interactive.form.PDCheckBox"},
 "EmployerName":{"fullyQualifiedFieldName":"topmostSubform[0].Page1[0].Name[0].f1_01[0]", "alternateFieldName":"", "fieldType":"org.apache.pdfbox.pdmodel.interactive.form.PDTextField"},
@@ -205,6 +208,7 @@ INSERT INTO form_type (name, description, json_metadata) VALUES (
 INSERT INTO form_type (name, description, json_metadata) VALUES (
 'f1095b',
 '1095-B – Health Coverage – Used by IRS in the enforcement of the Individual Mandate. Filed by the insurance carrier or self-insured plan by non-ALE. Transmitted to the IRS. <a href="https://www.irs.gov/pub/irspdf/f1095b.pdf"/>',
+'all',
 '{
 "Void":{"fullyQualifiedFieldName":"topmostSubform[0].Page1[0].PageOneHeader[0].Void[0]", "alternateFieldName":"", "fieldType":"org.apache.pdfbox.pdmodel.interactive.form.PDCheckBox"},
 "Corrected":{"fullyQualifiedFieldName":"topmostSubform[0].Page1[0].PageOneHeader[0].Corrected[0]", "alternateFieldName":"", "fieldType":"org.apache.pdfbox.pdmodel.interactive.form.PDCheckBox"},
@@ -526,6 +530,7 @@ INSERT INTO form_type (name, description, json_metadata) VALUES (
 INSERT INTO form_type (name, description, json_metadata) VALUES (
 'f1095b_page1',
 '1095-B – Health Coverage – Used by IRS in the enforcement of the Individual Mandate. Filed by the insurance carrier or self-insured plan by non-ALE. Transmitted to the IRS. <a href="https://www.irs.gov/pub/irspdf/f1095b.pdf"/>',
+'1',
 '{
 "Void":{"fullyQualifiedFieldName":"topmostSubform[0].Page1[0].PageOneHeader[0].Void[0]", "alternateFieldName":"", "fieldType":"org.apache.pdfbox.pdmodel.interactive.form.PDCheckBox"},
 "Corrected":{"fullyQualifiedFieldName":"topmostSubform[0].Page1[0].PageOneHeader[0].Corrected[0]", "alternateFieldName":"", "fieldType":"org.apache.pdfbox.pdmodel.interactive.form.PDCheckBox"},
@@ -652,6 +657,7 @@ INSERT INTO form_type (name, description, json_metadata) VALUES (
 INSERT INTO form_type (name, description, json_metadata) VALUES (
 'f1095c',
 '1095-C – Employer Provided Health Insurance Offer and Coverage – Used by the IRS in the enforcement of the Employer Mandate. Transmitted to the IRS and to employees eligible for coverage by Applicable Large Employer. <a href="https://www.irs.gov/pub/irs-pdf/f1095c.pdf"/>',
+'all',
 '{
 "Void":{"fullyQualifiedFieldName":"topmostSubform[0].Page1[0].c1_01_VOID[0]", "alternateFieldName":"", "fieldType":"org.apache.pdfbox.pdmodel.interactive.form.PDCheckBox"},
 "Corrected":{"fullyQualifiedFieldName":"topmostSubform[0].Page1[0].c1_02_CORRECTED[0]", "alternateFieldName":"", "fieldType":"org.apache.pdfbox.pdmodel.interactive.form.PDCheckBox"},
@@ -1004,6 +1010,7 @@ INSERT INTO form_type (name, description, json_metadata) VALUES (
 INSERT INTO form_type (name, description, json_metadata) VALUES (
 'f1095c_page1',
 '1095-C – Employer Provided Health Insurance Offer and Coverage – Used by the IRS in the enforcement of the Employer Mandate. Transmitted to the IRS and to employees eligible for coverage by Applicable Large Employer. <a href="https://www.irs.gov/pub/irs-pdf/f1095c.pdf"/>',
+'1',
 '{
 "Void":{"fullyQualifiedFieldName":"topmostSubform[0].Page1[0].c1_01_VOID[0]", "alternateFieldName":"", "fieldType":"org.apache.pdfbox.pdmodel.interactive.form.PDCheckBox"},
 "Corrected":{"fullyQualifiedFieldName":"topmostSubform[0].Page1[0].c1_02_CORRECTED[0]", "alternateFieldName":"", "fieldType":"org.apache.pdfbox.pdmodel.interactive.form.PDCheckBox"},
