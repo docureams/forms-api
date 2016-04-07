@@ -41,9 +41,9 @@ public class FormType implements Serializable {
             _unwantedPages = new ArrayList<>();
             if (!"all".equalsIgnoreCase(pageFilter)) {
                 Pattern pattern = Pattern.compile(pageFilter);
-                for (Integer idx = pageCount - 1; idx >= 0; idx--) {
+                for (Integer idx = pageCount; idx > 0; idx--) {
                     if (!pattern.matcher(idx.toString()).matches()) {
-                        _unwantedPages.add(idx);
+                        _unwantedPages.add(idx-1);
                     }
                 }
             }
