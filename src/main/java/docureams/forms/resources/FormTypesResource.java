@@ -37,14 +37,14 @@ public class FormTypesResource {
 
     @POST
     @Consumes({MediaType.APPLICATION_JSON})
-    public FormType add(@Valid FormType formType) {
+    public FormType create(@Valid FormType formType) {
         long newId = formTypeDAO.insert(formType);
         return formType.setId(newId);
     }
 
     @POST
     @Consumes({MediaType.MULTIPART_FORM_DATA})
-    public FormType add(
+    public FormType create(
             @FormParam("name") String name, 
             @FormParam("description") String description,
             @FormParam("pdfTemplate") File pdfTemplate,
@@ -90,9 +90,23 @@ public class FormTypesResource {
         return formType;
     }
     
-    @Produces({MediaType.APPLICATION_OCTET_STREAM})
     @GET
-    @Path("/{name}/asp")
+    @Path("/pdf/{name}")
+    @Produces("application/pdf")
+    public Response getPdfTemplate(@PathParam("name") String name) {
+        FormType formType = formTypeDAO.findByName(name);
+        if (formType == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        return Response
+            .ok(formType.getPdfTemplate())
+            .header("content-disposition","attachment; filename=\"" + name + ".pdf\"")
+            .build();
+    }
+    
+    @GET
+    @Path("/asp/{name}")
+    @Produces({MediaType.APPLICATION_OCTET_STREAM})
     public Response getClientSdkForAsp(@PathParam("name") String name) {
         FormType formType = formTypeDAO.findByName(name);
         if (formType == null) {

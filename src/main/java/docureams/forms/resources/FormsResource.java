@@ -112,7 +112,7 @@ public class FormsResource {
     @Path("/pdf/{id}")
     @Consumes({MediaType.MULTIPART_FORM_DATA})
     public Response updateFromPdf(
-            @FormParam("id") Long id, 
+            @PathParam("id") Long id, 
             @FormParam("pdfFile") File pdfFile) {
         Form form = formDAO.findById(id);
         if (form == null) {
