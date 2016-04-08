@@ -10,7 +10,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 import javax.ws.rs.core.Response;
-import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
 @Path("/formTypes")
@@ -51,7 +50,6 @@ public class FormTypesResource {
             @FormDataParam("name") String name, 
             @FormDataParam("description") String description,
             @FormDataParam("pdfTemplate") InputStream pdfStream,
-            @FormDataParam("pdfTemplate") FormDataContentDisposition fileDetail,
             @FormDataParam("pageFilter") String pageFilter,
             @FormDataParam("jsonMetadata") String jsonMetadata) {
         FormType formType = new FormType()
@@ -82,7 +80,6 @@ public class FormTypesResource {
             @PathParam("name") String name,
             @FormDataParam("description") String description,
             @FormDataParam("pdfTemplate") InputStream pdfStream,
-            @FormDataParam("pdfTemplate") FormDataContentDisposition fileDetail,
             @FormDataParam("pageFilter") String pageFilter,
             @FormDataParam("jsonMetadata") String jsonMetadata) {
         FormType formType = new FormType()
