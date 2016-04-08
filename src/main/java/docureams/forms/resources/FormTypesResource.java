@@ -9,6 +9,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 import javax.ws.rs.core.Response;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 
 @Path("/formTypes")
 @Produces({MediaType.APPLICATION_JSON})
@@ -45,11 +46,11 @@ public class FormTypesResource {
     @POST
     @Consumes({MediaType.MULTIPART_FORM_DATA})
     public FormType create(
-            @FormParam("name") String name, 
-            @FormParam("description") String description,
-            @FormParam("pdfTemplate") File pdfTemplate,
-            @FormParam("pageFilter") String pageFilter,
-            @FormParam("jsonMetadata") String jsonMetadata) {
+            @FormDataParam("name") String name, 
+            @FormDataParam("description") String description,
+            @FormDataParam("pdfTemplate") File pdfTemplate,
+            @FormDataParam("pageFilter") String pageFilter,
+            @FormDataParam("jsonMetadata") String jsonMetadata) {
         FormType formType = new FormType()
                 .setName(name)
                 .setDescription(description)
@@ -76,10 +77,10 @@ public class FormTypesResource {
     @Consumes({MediaType.MULTIPART_FORM_DATA})
     public FormType update(
             @PathParam("name") String name,
-            @FormParam("description") String description,
-            @FormParam("pdfTemplate") File pdfTemplate,
-            @FormParam("pageFilter") String pageFilter,
-            @FormParam("jsonMetadata") String jsonMetadata) {
+            @FormDataParam("description") String description,
+            @FormDataParam("pdfTemplate") File pdfTemplate,
+            @FormDataParam("pageFilter") String pageFilter,
+            @FormDataParam("jsonMetadata") String jsonMetadata) {
         FormType formType = new FormType()
                 .setName(name)
                 .setDescription(description)

@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 import javax.ws.rs.core.Response;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 
 @Path("/forms")
 @Produces({MediaType.APPLICATION_JSON})
@@ -69,8 +70,8 @@ public class FormsResource {
     @Path("/pdf")
     @Consumes({MediaType.MULTIPART_FORM_DATA})
     public Response createFromPdf(
-            @FormParam("name") String name, 
-            @FormParam("pdfFile") File pdfFile) {
+            @FormDataParam("name") String name, 
+            @FormDataParam("pdfFile") File pdfFile) {
         FormType formType = formTypeDAO.findByName(name);
         if (formType == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -113,7 +114,7 @@ public class FormsResource {
     @Consumes({MediaType.MULTIPART_FORM_DATA})
     public Response updateFromPdf(
             @PathParam("id") Long id, 
-            @FormParam("pdfFile") File pdfFile) {
+            @FormDataParam("pdfFile") File pdfFile) {
         Form form = formDAO.findById(id);
         if (form == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
