@@ -44,21 +44,42 @@ public class FormsResource {
 
     @POST
     @Consumes({MediaType.APPLICATION_JSON})
-    public Form add(@Valid Form form) {
+    public Form create(@Valid Form form) {
         long newId = formDAO.insert(form);
         return form.setId(newId);
     }
 
     @POST
     @Consumes({MediaType.APPLICATION_FORM_URLENCODED})
-    public Form add(
+    public Response create(
             @FormParam("name") String name, 
             @FormParam("jsonData") String jsonData) {
+        FormType formType = formTypeDAO.findByName(name);
+        if (formType == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
         Form form = new Form()
                 .setName(name)
                 .setJsonData(jsonData);
         long newId = formDAO.insert(form);
-        return form.setId(newId);
+        return Response.ok(form.setId(newId)).build();
+    }
+
+    @POST
+    @Path("/pdf")
+    @Consumes({MediaType.MULTIPART_FORM_DATA})
+    public Response createFromPdf(
+            @FormParam("name") String name, 
+            @FormParam("pdfFile") File pdfFile) {
+        FormType formType = formTypeDAO.findByName(name);
+        if (formType == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        Form form = new Form()
+                .setName(name)
+                .setJsonData(formType.parsePdf(pdfFile));
+        long newId = formDAO.insert(form);
+        return Response.ok(form.setId(newId)).build();
     }
 
     @PUT
@@ -85,6 +106,25 @@ public class FormsResource {
                 .setJsonData(jsonData);
         formDAO.update(form);
         return form;
+    }
+
+    @POST
+    @Path("/pdf/{id}")
+    @Consumes({MediaType.MULTIPART_FORM_DATA})
+    public Response updateFromPdf(
+            @FormParam("id") Long id, 
+            @FormParam("pdfFile") File pdfFile) {
+        Form form = formDAO.findById(id);
+        if (form == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        FormType formType = formTypeDAO.findByName(form.getName());
+        if (formType == null) {
+            return Response.serverError().build();
+        }
+        form.setJsonData(formType.parsePdf(pdfFile));
+        formDAO.update(form);
+        return Response.ok(form).build();
     }
 
     @DELETE
