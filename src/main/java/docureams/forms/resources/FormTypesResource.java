@@ -106,7 +106,7 @@ public class FormTypesResource {
         
         return Response
             .ok(contents.getBytes(StandardCharsets.UTF_8))
-            .header("content-disposition","attachment; filename = " + name.toUpperCase() + ".asp")
+            .header("content-disposition","attachment; filename=\"" + name.toUpperCase() + ".asp\"")
             .build();
     }
 

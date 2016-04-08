@@ -115,6 +115,7 @@ public class FormsResource {
                 if (document == null) {
                     return Response.serverError().build();
                 }
+                document.getDocumentCatalog().getAcroForm().flatten();
                 if (destination != null) {
                     merger.appendDocument(destination, document);
                     document.close();
@@ -130,7 +131,7 @@ public class FormsResource {
             return Response
                 .ok(tempFile)
                 .header("content-type", "application/pdf")
-                .header("content-disposition","attachment; filename = " + filename != null ? filename : "form-"+ids+".pdf")
+                .header("content-disposition","attachment; filename=\"" + (filename != null ? filename : "form-"+ids+".pdf") + "\"")
                 .build();
         } catch (Exception ex) {
             Logger.getLogger(FormsResource.class.getName()).log(Level.SEVERE, null, ex);
