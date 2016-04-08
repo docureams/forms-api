@@ -2,9 +2,11 @@ package docureams.forms.resources;
 
 import docureams.forms.core.Form;
 import docureams.forms.core.FormType;
+import docureams.forms.core.mapper.FormTypeMapper;
 import docureams.forms.db.FormDAO;
 import docureams.forms.db.FormTypeDAO;
 import java.io.File;
+import java.io.InputStream;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -14,10 +16,11 @@ import java.util.logging.Logger;
 import javax.ws.rs.core.Response;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
 @Path("/forms")
-@Produces({MediaType.APPLICATION_JSON})
+@Produces(MediaType.APPLICATION_JSON)
 public class FormsResource {
 
     FormDAO formDAO;
@@ -44,14 +47,14 @@ public class FormsResource {
     }
 
     @POST
-    @Consumes({MediaType.APPLICATION_JSON})
+    @Consumes(MediaType.APPLICATION_JSON)
     public Form create(@Valid Form form) {
         long newId = formDAO.insert(form);
         return form.setId(newId);
     }
 
     @POST
-    @Consumes({MediaType.APPLICATION_FORM_URLENCODED})
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response create(
             @FormParam("name") String name, 
             @FormParam("jsonData") String jsonData) {
@@ -68,24 +71,25 @@ public class FormsResource {
 
     @POST
     @Path("/pdf")
-    @Consumes({MediaType.MULTIPART_FORM_DATA})
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response createFromPdf(
             @FormDataParam("name") String name, 
-            @FormDataParam("pdfFile") File pdfFile) {
+            @FormDataParam("pdfFile") InputStream pdfStream,
+            @FormDataParam("pdfFile") FormDataContentDisposition fileDetail) {
         FormType formType = formTypeDAO.findByName(name);
         if (formType == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
         Form form = new Form()
                 .setName(name)
-                .setJsonData(formType.parsePdf(pdfFile));
+                .setJsonData(formType.parsePdf(FormTypeMapper.convertStreamToFile(name, pdfStream)));
         long newId = formDAO.insert(form);
         return Response.ok(form.setId(newId)).build();
     }
 
     @PUT
     @Path("/{id}")
-    @Consumes({MediaType.APPLICATION_JSON})
+    @Consumes(MediaType.APPLICATION_JSON)
     public Form update(
             @PathParam("id") Integer id, 
             @Valid Form form) {
@@ -94,9 +98,9 @@ public class FormsResource {
         return form;
     }
 
-    @PUT
+    @POST
     @Path("/{id}")
-    @Consumes({MediaType.APPLICATION_FORM_URLENCODED})
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Form update(
             @PathParam("id") Integer id, 
             @FormParam("name") String name, 
@@ -111,10 +115,11 @@ public class FormsResource {
 
     @POST
     @Path("/pdf/{id}")
-    @Consumes({MediaType.MULTIPART_FORM_DATA})
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response updateFromPdf(
             @PathParam("id") Long id, 
-            @FormDataParam("pdfFile") File pdfFile) {
+            @FormDataParam("pdfFile") InputStream pdfStream,
+            @FormDataParam("pdfFile") FormDataContentDisposition fileDetail) {
         Form form = formDAO.findById(id);
         if (form == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -123,7 +128,7 @@ public class FormsResource {
         if (formType == null) {
             return Response.serverError().build();
         }
-        form.setJsonData(formType.parsePdf(pdfFile));
+        form.setJsonData(formType.parsePdf(FormTypeMapper.convertStreamToFile(formType.getName(), pdfStream)));
         formDAO.update(form);
         return Response.ok(form).build();
     }

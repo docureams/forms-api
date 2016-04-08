@@ -1,18 +1,20 @@
 package docureams.forms.resources;
 
 import docureams.forms.core.FormType;
+import docureams.forms.core.mapper.FormTypeMapper;
 import docureams.forms.db.FormTypeDAO;
-import java.io.File;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 import javax.ws.rs.core.Response;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
 @Path("/formTypes")
-@Produces({MediaType.APPLICATION_JSON})
+@Produces(MediaType.APPLICATION_JSON)
 public class FormTypesResource {
 
     FormTypeDAO formTypeDAO;
@@ -37,24 +39,25 @@ public class FormTypesResource {
     }
 
     @POST
-    @Consumes({MediaType.APPLICATION_JSON})
+    @Consumes(MediaType.APPLICATION_JSON)
     public FormType create(@Valid FormType formType) {
         long newId = formTypeDAO.insert(formType);
         return formType.setId(newId);
     }
 
     @POST
-    @Consumes({MediaType.MULTIPART_FORM_DATA})
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
     public FormType create(
             @FormDataParam("name") String name, 
             @FormDataParam("description") String description,
-            @FormDataParam("pdfTemplate") File pdfTemplate,
+            @FormDataParam("pdfTemplate") InputStream pdfStream,
+            @FormDataParam("pdfTemplate") FormDataContentDisposition fileDetail,
             @FormDataParam("pageFilter") String pageFilter,
             @FormDataParam("jsonMetadata") String jsonMetadata) {
         FormType formType = new FormType()
                 .setName(name)
                 .setDescription(description)
-                .setPdfTemplate(pdfTemplate)
+                .setPdfTemplate(FormTypeMapper.convertStreamToFile(name, pdfStream))
                 .setPageFilter(pageFilter)
                 .setJsonMetadata(jsonMetadata);
         long newId = formTypeDAO.insert(formType);
@@ -63,7 +66,7 @@ public class FormTypesResource {
 
     @PUT
     @Path("/{name}")
-    @Consumes({MediaType.APPLICATION_JSON})
+    @Consumes(MediaType.APPLICATION_JSON)
     public FormType update(
             @PathParam("name") String name, 
             @Valid FormType formType) {
@@ -72,19 +75,20 @@ public class FormTypesResource {
         return formType;
     }
 
-    @PUT
+    @POST
     @Path("/{name}")
-    @Consumes({MediaType.MULTIPART_FORM_DATA})
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
     public FormType update(
             @PathParam("name") String name,
             @FormDataParam("description") String description,
-            @FormDataParam("pdfTemplate") File pdfTemplate,
+            @FormDataParam("pdfTemplate") InputStream pdfStream,
+            @FormDataParam("pdfTemplate") FormDataContentDisposition fileDetail,
             @FormDataParam("pageFilter") String pageFilter,
             @FormDataParam("jsonMetadata") String jsonMetadata) {
         FormType formType = new FormType()
                 .setName(name)
                 .setDescription(description)
-                .setPdfTemplate(pdfTemplate)
+                .setPdfTemplate(FormTypeMapper.convertStreamToFile(name, pdfStream))
                 .setPageFilter(pageFilter)
                 .setJsonMetadata(jsonMetadata);
         formTypeDAO.update(formType);
@@ -107,7 +111,7 @@ public class FormTypesResource {
     
     @GET
     @Path("/asp/{name}")
-    @Produces({MediaType.APPLICATION_OCTET_STREAM})
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response getClientSdkForAsp(@PathParam("name") String name) {
         FormType formType = formTypeDAO.findByName(name);
         if (formType == null) {

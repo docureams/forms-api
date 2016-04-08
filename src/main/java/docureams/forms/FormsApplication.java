@@ -8,6 +8,7 @@ import io.dropwizard.Application;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.flyway.FlywayBundle;
 import io.dropwizard.flyway.FlywayFactory;
+import io.dropwizard.forms.MultiPartBundle;
 import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.jdbi.DBIHealthCheck;
 import io.dropwizard.setup.Bootstrap;
@@ -28,6 +29,7 @@ public class FormsApplication extends Application<FormsConfiguration> {
 
     @Override
     public void initialize(final Bootstrap<FormsConfiguration> bootstrap) {
+        bootstrap.addBundle(new MultiPartBundle());
         bootstrap.addBundle(new FlywayBundle<FormsConfiguration>() {
             @Override
             public DataSourceFactory getDataSourceFactory(FormsConfiguration configuration) {

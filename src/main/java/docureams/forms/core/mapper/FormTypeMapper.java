@@ -19,16 +19,25 @@ public class FormTypeMapper implements ResultSetMapper<FormType>
     @Override
     public FormType map(int index, ResultSet resultSet, StatementContext statementContext) throws SQLException
     {
-        File pdfTemplate = null;
+        return new FormType()
+                .setId(resultSet.getInt("id"))
+                .setName(resultSet.getString("name"))
+                .setDescription(resultSet.getString("description"))
+                .setPdfTemplate(convertStreamToFile(resultSet.getString("name"), resultSet.getBinaryStream("pdf_template")))
+                .setJsonMetadata(resultSet.getString("json_metadata"));
+    }
+    
+    public static File convertStreamToFile(String name, InputStream stream) {
+        File file = null;
         try {
-            pdfTemplate = File.createTempFile(resultSet.getString("name"), ".pdf");
+            file = File.createTempFile(name, ".pdf");
         } catch (IOException ex) {
             Logger.getLogger(FormTypeMapper.class.getName()).log(Level.SEVERE, null, ex);
         }
-        pdfTemplate.deleteOnExit();
+        file.deleteOnExit();
         try (
-            InputStream inputStream = resultSet.getBinaryStream("pdf_template");
-            OutputStream outputStream = new FileOutputStream(pdfTemplate)
+            OutputStream outputStream = new FileOutputStream(file);
+            InputStream inputStream = stream;
         ) {
             int bytesRead = -1;
             byte[] buffer = new byte[4096];
@@ -40,13 +49,6 @@ public class FormTypeMapper implements ResultSetMapper<FormType>
         } catch (IOException ex) {
             Logger.getLogger(FormTypeMapper.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        return new FormType()
-                .setId(resultSet.getInt("id"))
-                .setName(resultSet.getString("name"))
-                .setDescription(resultSet.getString("description"))
-                .setPdfTemplate(pdfTemplate)
-                .setPageFilter(resultSet.getString("page_filter"))
-                .setJsonMetadata(resultSet.getString("json_metadata"));
+        return file;
     }
 }
