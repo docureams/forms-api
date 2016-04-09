@@ -364,10 +364,7 @@ public class FormType implements Serializable {
                 document = PDDocument.load(pdfFile);
                 PDDocumentCatalog docCatalog = document.getDocumentCatalog();
                 PDAcroForm acroForm = docCatalog.getAcroForm();
-                List fields = acroForm.getFields();
-                Iterator fieldsIter = fields.iterator();
-                while (fieldsIter.hasNext()) {
-                    PDField field = (PDField) fieldsIter.next();
+                for (PDField field : acroForm.getFieldTree()) {
                     processField(field);
                 }
                 return new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(dataMap);
@@ -413,13 +410,11 @@ public class FormType implements Serializable {
                 document = PDDocument.load(pdfFile);
                 PDDocumentCatalog docCatalog = document.getDocumentCatalog();
                 PDAcroForm acroForm = docCatalog.getAcroForm();
-                List fields = acroForm.getFields();
                 outputString.append("{\n");
-                Iterator fieldsIter = fields.iterator();
-                while (fieldsIter.hasNext()) {
-                    PDField field = (PDField) fieldsIter.next();
+                PDField field = null;
+                for (Iterator<PDField> iter = acroForm.getFieldIterator(); iter.hasNext(); field = iter.next()) {
                     processField(field);
-                    if (fieldsIter.hasNext()) {
+                    if (iter.hasNext()) {
                         outputString.append(",");
                     }
                 }
