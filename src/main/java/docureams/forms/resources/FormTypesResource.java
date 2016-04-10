@@ -91,6 +91,16 @@ public class FormTypesResource {
         return formType;
     }
     
+    @POST
+    @Path("/pdf")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public Response update(
+            @FormDataParam("pdfTemplate") InputStream pdfStream) {
+        return Response
+                .ok(FormType.parseMetadataFromPdf(pdfStream))
+                .build();
+    }
+
     @GET
     @Path("/pdf/{name}")
     @Produces("application/pdf")
