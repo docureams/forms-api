@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -29,7 +29,7 @@ public class FormType implements Serializable {
     
     private String description;
     
-    private File pdfTemplate;
+    private InputStream pdfTemplate;
     
     private String pageFilter = "all";
 
@@ -115,7 +115,7 @@ public class FormType implements Serializable {
     public FormType() {
     }
 
-    public FormType(String name, String description, String jsonMetadata, File pdfTemplate, String pageFilter) {
+    public FormType(String name, String description, String jsonMetadata, InputStream pdfTemplate, String pageFilter) {
         this.name = name;
         this.description = description;
         this.jsonMetadata = jsonMetadata;
@@ -160,12 +160,12 @@ public class FormType implements Serializable {
     }
 
     @JsonIgnore
-    public File getPdfTemplate() {
+    public InputStream getPdfTemplate() {
         return pdfTemplate;
     }
 
     @JsonIgnore
-    public FormType setPdfTemplate(File pdfTemplate) {
+    public FormType setPdfTemplate(InputStream pdfTemplate) {
         this.pdfTemplate = pdfTemplate;
         return this;
     }
@@ -183,12 +183,12 @@ public class FormType implements Serializable {
         return new GeneratePdfJob(jsonData).doJobWithResult();
     }
 
-    public String parsePdf(File pdfFile) {
-        return new ParsePdfJob(pdfFile).doJobWithResult();
+    public String parsePdf(InputStream pdfInputStream) {
+        return new ParsePdfJob(pdfInputStream).doJobWithResult();
     }
 
-    public static String parseMetadataFromPdf(File pdfFile) {
-        return new ParseMetadataFromPdfJob(pdfFile).doJobWithResult();
+    public static String parseMetadataFromPdf(InputStream pdfInputStream) {
+        return new ParseMetadataFromPdfJob(pdfInputStream).doJobWithResult();
     }
     
     public String defaults() throws JsonProcessingException, IOException {
@@ -351,17 +351,17 @@ public class FormType implements Serializable {
 
     public class ParsePdfJob {
 
-        private final File pdfFile;
+        private final InputStream pdfInputStream;
         private final LinkedHashMap<String, Object> dataMap = new LinkedHashMap<>();
 
-        public ParsePdfJob(File pdfFile) {
-            this.pdfFile = pdfFile;
+        public ParsePdfJob(InputStream pdfInputStream) {
+            this.pdfInputStream = pdfInputStream;
         }
 
         public String doJobWithResult() {
             PDDocument document = null;
             try {
-                document = PDDocument.load(pdfFile);
+                document = PDDocument.load(pdfInputStream);
                 PDDocumentCatalog docCatalog = document.getDocumentCatalog();
                 PDAcroForm acroForm = docCatalog.getAcroForm();
                 for (PDField field : acroForm.getFieldTree()) {
@@ -369,6 +369,7 @@ public class FormType implements Serializable {
                 }
                 return new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(dataMap);
             } catch (Exception ex) {
+                Logger.getLogger(FormType.class.getName()).log(Level.SEVERE, null, ex);
                 return null;
             } finally {
                 if (document != null) {
@@ -397,17 +398,17 @@ public class FormType implements Serializable {
     
     public static class ParseMetadataFromPdfJob {
 
-        private final File pdfFile;
+        private final InputStream pdfInputStream;
         private final StringBuilder outputString = new StringBuilder();
 
-        public ParseMetadataFromPdfJob(File pdfFile) {
-            this.pdfFile = pdfFile;
+        public ParseMetadataFromPdfJob(InputStream pdfInputStream) {
+            this.pdfInputStream = pdfInputStream;
         }
 
         public String doJobWithResult() {
             PDDocument document = null;
             try {
-                document = PDDocument.load(pdfFile);
+                document = PDDocument.load(pdfInputStream);
                 PDDocumentCatalog docCatalog = document.getDocumentCatalog();
                 PDAcroForm acroForm = docCatalog.getAcroForm();
                 outputString.append("{\n");

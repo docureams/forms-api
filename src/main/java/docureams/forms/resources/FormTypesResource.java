@@ -1,7 +1,6 @@
 package docureams.forms.resources;
 
 import docureams.forms.core.FormType;
-import docureams.forms.core.mapper.FormTypeMapper;
 import docureams.forms.db.FormTypeDAO;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -55,7 +54,7 @@ public class FormTypesResource {
         FormType formType = new FormType()
                 .setName(name)
                 .setDescription(description)
-                .setPdfTemplate(FormTypeMapper.convertStreamToFile(name, pdfStream))
+                .setPdfTemplate(pdfStream)
                 .setPageFilter(pageFilter)
                 .setJsonMetadata(jsonMetadata);
         long newId = formTypeDAO.insert(formType);
@@ -85,7 +84,7 @@ public class FormTypesResource {
         FormType formType = new FormType()
                 .setName(name)
                 .setDescription(description)
-                .setPdfTemplate(FormTypeMapper.convertStreamToFile(name, pdfStream))
+                .setPdfTemplate(pdfStream)
                 .setPageFilter(pageFilter)
                 .setJsonMetadata(jsonMetadata);
         formTypeDAO.update(formType);

@@ -2,7 +2,6 @@ package docureams.forms.resources;
 
 import docureams.forms.core.Form;
 import docureams.forms.core.FormType;
-import docureams.forms.core.mapper.FormTypeMapper;
 import docureams.forms.db.FormDAO;
 import docureams.forms.db.FormTypeDAO;
 import java.io.File;
@@ -80,7 +79,7 @@ public class FormsResource {
         }
         Form form = new Form()
                 .setName(name)
-                .setJsonData(formType.parsePdf(FormTypeMapper.convertStreamToFile(name, pdfStream)));
+                .setJsonData(formType.parsePdf(pdfStream));
         long newId = formDAO.insert(form);
         return Response.ok(form.setId(newId)).build();
     }
@@ -125,7 +124,7 @@ public class FormsResource {
         if (formType == null) {
             return Response.serverError().build();
         }
-        form.setJsonData(formType.parsePdf(FormTypeMapper.convertStreamToFile(formType.getName(), pdfStream)));
+        form.setJsonData(formType.parsePdf(pdfStream));
         formDAO.update(form);
         return Response.ok(form).build();
     }
