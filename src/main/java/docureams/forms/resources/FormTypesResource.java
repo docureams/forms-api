@@ -11,7 +11,7 @@ import java.util.List;
 import javax.ws.rs.core.Response;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
-@Path("/formTypes")
+@Path("/api")
 @Produces(MediaType.APPLICATION_JSON)
 public class FormTypesResource {
 
@@ -22,12 +22,13 @@ public class FormTypesResource {
     }
 
     @GET
+    @Path("/formTypes")
     public List<FormType> getAll(){
         return formTypeDAO.getAll();
     }
 
     @GET
-    @Path("/{name}")
+    @Path("/formTypes/{name}")
     public Response get(@PathParam("name") String name){
         FormType formType = formTypeDAO.findByName(name);
         if (formType == null) {
@@ -37,6 +38,7 @@ public class FormTypesResource {
     }
 
     @POST
+    @Path("/formTypes")
     @Consumes(MediaType.APPLICATION_JSON)
     public FormType create(@Valid FormType formType) {
         long newId = formTypeDAO.insert(formType);
@@ -44,6 +46,7 @@ public class FormTypesResource {
     }
 
     @POST
+    @Path("/formTypes")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public FormType create(
             @FormDataParam("name") String name, 
@@ -62,7 +65,7 @@ public class FormTypesResource {
     }
 
     @PUT
-    @Path("/{name}")
+    @Path("/formTypes/{name}")
     @Consumes(MediaType.APPLICATION_JSON)
     public FormType update(
             @PathParam("name") String name, 
@@ -73,7 +76,7 @@ public class FormTypesResource {
     }
 
     @POST
-    @Path("/{name}")
+    @Path("/formTypes/{name}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public FormType update(
             @PathParam("name") String name,
@@ -92,9 +95,9 @@ public class FormTypesResource {
     }
     
     @POST
-    @Path("/pdf")
+    @Path("/formTypes/pdf")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public Response update(
+    public Response parseMetadataFromPdf(
             @FormDataParam("pdfTemplate") InputStream pdfStream) {
         return Response
                 .ok(FormType.parseMetadataFromPdf(pdfStream))
@@ -102,7 +105,7 @@ public class FormTypesResource {
     }
 
     @GET
-    @Path("/pdf/{name}")
+    @Path("/formTypes/pdf/{name}")
     @Produces("application/pdf")
     public Response getPdfTemplate(@PathParam("name") String name) {
         FormType formType = formTypeDAO.findByName(name);
@@ -116,7 +119,7 @@ public class FormTypesResource {
     }
     
     @GET
-    @Path("/asp/{name}")
+    @Path("/formTypes/asp/{name}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response getClientSdkForAsp(@PathParam("name") String name) {
         FormType formType = formTypeDAO.findByName(name);

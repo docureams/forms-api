@@ -17,7 +17,7 @@ import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
-@Path("/forms")
+@Path("/api")
 @Produces(MediaType.APPLICATION_JSON)
 public class FormsResource {
 
@@ -30,12 +30,13 @@ public class FormsResource {
     }
 
     @GET
+    @Path("/forms")
     public List<Form> getAll(){
         return formDAO.getAll();
     }
 
     @GET
-    @Path("/{id}")
+    @Path("/forms/{id}")
     public Response get(@PathParam("id") Integer id){
         Form form = formDAO.findById(id);
         if (form == null) {
@@ -45,6 +46,7 @@ public class FormsResource {
     }
 
     @POST
+    @Path("/forms")
     @Consumes(MediaType.APPLICATION_JSON)
     public Form create(@Valid Form form) {
         long newId = formDAO.insert(form);
@@ -52,6 +54,7 @@ public class FormsResource {
     }
 
     @POST
+    @Path("/forms")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response create(
             @FormParam("name") String name, 
@@ -68,7 +71,7 @@ public class FormsResource {
     }
 
     @POST
-    @Path("/pdf")
+    @Path("/forms/pdf")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response createFromPdf(
             @FormDataParam("name") String name, 
@@ -85,7 +88,7 @@ public class FormsResource {
     }
 
     @PUT
-    @Path("/{id}")
+    @Path("/forms/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     public Form update(
             @PathParam("id") Integer id, 
@@ -96,7 +99,7 @@ public class FormsResource {
     }
 
     @POST
-    @Path("/{id}")
+    @Path("/forms/{id}")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Form update(
             @PathParam("id") Integer id, 
@@ -111,7 +114,7 @@ public class FormsResource {
     }
 
     @POST
-    @Path("/pdf/{id}")
+    @Path("/forms/pdf/{id}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response updateFromPdf(
             @PathParam("id") Long id, 
@@ -130,13 +133,13 @@ public class FormsResource {
     }
 
     @DELETE
-    @Path("/{id}")
+    @Path("/forms/{id}")
     public void delete(@PathParam("id") Integer id) {
         formDAO.deleteById(id);
     }
     
     @GET
-    @Path("/pdf")
+    @Path("/forms/pdf")
     @Produces("application/pdf")
     public Response mergeAsPdf(
             @QueryParam("ids") String ids, 

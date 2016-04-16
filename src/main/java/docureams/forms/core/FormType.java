@@ -20,6 +20,7 @@ import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
 import org.apache.pdfbox.pdmodel.interactive.form.PDCheckBox;
 import org.apache.pdfbox.pdmodel.interactive.form.PDField;
+import org.apache.pdfbox.pdmodel.interactive.form.PDNonTerminalField;
 import org.apache.pdfbox.pdmodel.interactive.form.PDTextField;
 
 public class FormType implements Serializable {
@@ -383,15 +384,21 @@ public class FormType implements Serializable {
         }
 
         private void processField(PDField field) throws IOException {
-            Object fieldValue = null;
-            if (field instanceof PDTextField) {
-                fieldValue = field.getValueAsString();
-            } else if (field instanceof PDCheckBox) {
-                fieldValue = ((PDCheckBox) field).isChecked();
-            }
+            if (field instanceof PDNonTerminalField) {
+                for (PDField subField : ((PDNonTerminalField)field).getChildren()) {
+                    processField(subField);
+                }
+            } else {
+                Object fieldValue = null;
+                if (field instanceof PDTextField) {
+                    fieldValue = field.getValueAsString();
+                } else if (field instanceof PDCheckBox) {
+                    fieldValue = ((PDCheckBox) field).isChecked();
+                }
 
-            if (fieldValue != null) {
-                dataMap.put(reverseMap().get(field.getFullyQualifiedName()), fieldValue);
+                if (fieldValue != null) {
+                    dataMap.put(reverseMap().get(field.getFullyQualifiedName()), fieldValue);
+                }
             }
         }
     }
@@ -412,12 +419,10 @@ public class FormType implements Serializable {
                 PDDocumentCatalog docCatalog = document.getDocumentCatalog();
                 PDAcroForm acroForm = docCatalog.getAcroForm();
                 outputString.append("{\n");
-                PDField field = null;
-                for (Iterator<PDField> iter = acroForm.getFieldIterator(); iter.hasNext(); field = iter.next()) {
-                    processField(field);
-                    if (iter.hasNext()) {
-                        outputString.append(",");
-                    }
+                boolean isFirst = true;
+                for (PDField field : acroForm.getFieldTree()) {
+                    processField(field, isFirst);
+                    isFirst = false;
                 }
                 outputString.append("}\n");
                 document.close();
@@ -436,19 +441,29 @@ public class FormType implements Serializable {
             }
         }
 
-        private void processField(PDField field) throws IOException {
-            String fullyQualifiedName = field.getFullyQualifiedName();
-            String alternateFieldName = field.getAlternateFieldName();
-            String fieldValue = null;
-            if (field instanceof PDTextField) {
-                fieldValue = field.getValueAsString();
-            } else if (field instanceof PDCheckBox) {
-                fieldValue = "checkbox";
-            }
+        private void processField(PDField field, boolean isFirst) throws IOException {
+            if (field instanceof PDNonTerminalField) {
+                for (PDField subField : ((PDNonTerminalField)field).getChildren()) {
+                    processField(subField, isFirst);
+                    isFirst = false;
+                }
+            } else {
+                String fullyQualifiedName = field.getFullyQualifiedName();
+                String alternateFieldName = field.getAlternateFieldName();
+                String fieldValue = null;
+                if (field instanceof PDTextField) {
+                    fieldValue = field.getValueAsString();
+                } else if (field instanceof PDCheckBox) {
+                    fieldValue = "checkbox";
+                }
 
-            outputString.append("\"").append(fieldValue).append("\":{\"fullyQualifiedFieldName\":\"").append(fullyQualifiedName).append("\", ");
-            outputString.append("\"alternateFieldName\":\"").append(alternateFieldName == null ? "" : alternateFieldName).append("\", ");
-            outputString.append("\"fieldType\":\"").append(field.getClass().getName()).append("\"}\n"); 
+                if (!isFirst) {
+                    outputString.append(",");
+                }
+                outputString.append("\"").append(fieldValue).append("\":{\"fullyQualifiedFieldName\":\"").append(fullyQualifiedName).append("\", ");
+                outputString.append("\"alternateFieldName\":\"").append(alternateFieldName == null ? "" : alternateFieldName).append("\", ");
+                outputString.append("\"fieldType\":\"").append(field.getClass().getName()).append("\"}\n");
+            }
         }
     }
 }
