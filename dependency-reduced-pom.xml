@@ -11,15 +11,6 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>com.boxfuse.client</groupId>
-        <artifactId>boxfuse-maven-plugin</artifactId>
-        <version>1.24.6.1250</version>
-        <configuration>
-          <user>52f4fd46e57e4689a0259da680ff4c9a</user>
-          <secret>2TgdCXNEzInPWeILJ8UCng0Hbq3nja75zqMFT5kBojMVfbWspshjdUEVFTAKHM2A</secret>
-        </configuration>
-      </plugin>
-      <plugin>
         <artifactId>maven-shade-plugin</artifactId>
         <version>2.4.1</version>
         <executions>
@@ -96,12 +87,6 @@
       </plugin>
     </plugins>
   </build>
-  <pluginRepositories>
-    <pluginRepository>
-      <id>boxfuse-repo</id>
-      <url>https://files.boxfuse.com</url>
-    </pluginRepository>
-  </pluginRepositories>
   <dependencies>
     <dependency>
       <groupId>io.dropwizard</groupId>
