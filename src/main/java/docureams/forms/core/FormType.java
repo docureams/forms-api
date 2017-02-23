@@ -327,15 +327,23 @@ public class FormType implements Serializable {
                         PDFieldDescriptor fieldDesc = metadataMap().get(fieldKey);
                         if (fieldDesc.fieldType.endsWith("PDCheckBox")) {
                             PDCheckBox field = (PDCheckBox) acroForm.getField(fieldDesc.fullyQualifiedFieldName);
-                            if ((Boolean)(this.dataMap.get(fieldKey))) {
-                                field.check();
+                            if (field != null) {
+                                if ((Boolean)(this.dataMap.get(fieldKey))) {
+                                    field.check();
+                                } else {
+                                    field.unCheck();
+                                }
                             } else {
-                                field.unCheck();
+                                Logger.getLogger(FormType.class.getName()).log(Level.WARNING, null, "No such field named '"+fieldDesc.fullyQualifiedFieldName+"'");
                             }
                         } else if (fieldDesc.fieldType.endsWith("PDTextField")) {
                             PDTextField field = (PDTextField) acroForm.getField(fieldDesc.fullyQualifiedFieldName);
-                            Object value = this.dataMap.get(fieldKey);
-                            field.setValue(value != null ? value.toString() : "");
+                            if (field != null) {
+                                Object value = this.dataMap.get(fieldKey);
+                                field.setValue(value != null ? value.toString() : "");
+                            } else {
+                                Logger.getLogger(FormType.class.getName()).log(Level.WARNING, null, "No such field named '"+fieldDesc.fullyQualifiedFieldName+"'");
+                            }
                         }
                     }
                 }
