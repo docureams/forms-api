@@ -334,7 +334,7 @@ public class FormType implements Serializable {
                                     field.unCheck();
                                 }
                             } else {
-                                Logger.getLogger(FormType.class.getName()).log(Level.WARNING, null, "No such field named '"+fieldDesc.fullyQualifiedFieldName+"'");
+                                Logger.getLogger(FormType.class.getName()).log(Level.WARNING, "No such field named '"+fieldDesc.fullyQualifiedFieldName+"'");
                             }
                         } else if (fieldDesc.fieldType.endsWith("PDTextField")) {
                             PDTextField field = (PDTextField) acroForm.getField(fieldDesc.fullyQualifiedFieldName);
@@ -342,7 +342,7 @@ public class FormType implements Serializable {
                                 Object value = this.dataMap.get(fieldKey);
                                 field.setValue(value != null ? value.toString() : "");
                             } else {
-                                Logger.getLogger(FormType.class.getName()).log(Level.WARNING, null, "No such field named '"+fieldDesc.fullyQualifiedFieldName+"'");
+                                Logger.getLogger(FormType.class.getName()).log(Level.WARNING, "No such field named '"+fieldDesc.fullyQualifiedFieldName+"'");
                             }
                         }
                     }
